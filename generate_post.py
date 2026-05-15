@@ -56,8 +56,15 @@ Only return the Markdown content. No extra explanations."""
         "generationConfig": {"temperature": 0.8, "maxOutputTokens": 2048}
     }
 
-    response = requests.post(url, json=payload)
-    response.raise_for_status()
+    import time
+    for attempt in range(3):
+        response = requests.post(url, json=payload)
+        if response.status_code == 429:
+            print(f"Rate limited, waiting 30 seconds... (attempt {attempt+1})")
+            time.sleep(30)
+            continue
+        response.raise_for_status()
+        break
 
     content = response.json()["candidates"][0]["content"]["parts"][0]["text"]
 
