@@ -27,17 +27,17 @@ jobs:
       - name: Generate Morning Post
         if: github.event.schedule == '0 7 * * *' || github.event_name == 'workflow_dispatch'
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           POST_OFFSET: '0'
         run: python generate_post.py
 
       - name: Generate Evening Post
         if: github.event.schedule == '0 19 * * *'
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           POST_OFFSET: '1'
         run: python generate_post.py
-
+        
       - name: Commit and Push
         run: |
           git config user.name "BlogBot"
