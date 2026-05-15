@@ -1,0 +1,15 @@
+title: My AI Blog
+description: Daily insights on technology, health, finance, and more
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+permalink: /:year/:month/:day/:title/
