@@ -5,6 +5,7 @@ import re
 import time
 
 GROQ_API_KEY = os.environ["GROQ_API_KEY"]
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "")
 
 TOPICS = [
     "how artificial intelligence is changing everyday life",
@@ -29,6 +30,45 @@ TOPICS = [
     "simple ways to improve your focus daily",
 ]
 
+def get_unsplash_image(topic):
+    """Fetch a relevant image from Unsplash."""
+    try:
+        query = topic[:50]
+        url = "https://api.unsplash.com/photos/random"
+        headers = {"Authorization": f"Client-ID {UNSPLASH_ACCESS_KEY}"}
+        params = {"query": query, "orientation": "landscape"}
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            img_url = data["urls"]["regular"]
+            alt = data["alt_description"] or topic
+            credit_name = data["user"]["name"]
+            credit_link = data["user"]["links"]["html"]
+            print(f"✅ Unsplash image found: {img_url}")
+            return img_url, alt, credit_name, credit_link
+    except Exception as e:
+        print(f"Unsplash failed: {e}")
+    return None, None, None, None
+
+def get_pollinations_image(topic):
+    """Fallback: AI-generated image from Pollinations.ai."""
+    try:
+        prompt = topic.replace(" ", "%20")
+        img_url = f"https://image.pollinations.ai/prompt/{prompt}?width=800&height=450&nologo=true"
+        print(f"✅ Using Pollinations fallback: {img_url}")
+        return img_url, topic, None, None
+    except Exception as e:
+        print(f"Pollinations failed: {e}")
+    return None, None, None, None
+
+def get_image(topic):
+    """Try Unsplash first, fallback to Pollinations."""
+    if UNSPLASH_ACCESS_KEY:
+        img_url, alt, credit_name, credit_link = get_unsplash_image(topic)
+        if img_url:
+            return img_url, alt, credit_name, credit_link
+    return get_pollinations_image(topic)
+
 def call_groq(prompt):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -48,12 +88,10 @@ def call_groq(prompt):
 
         if response.status_code == 200:
             return response.json()["choices"][0]["message"]["content"]
-
         elif response.status_code == 429:
             wait = 20 * (attempt + 1)
             print(f"Rate limited. Waiting {wait} seconds...")
             time.sleep(wait)
-
         else:
             print(f"Error {response.status_code}: {response.text}")
             response.raise_for_status()
@@ -65,6 +103,18 @@ def generate_post(topic_offset=0):
     index = (today.timetuple().tm_yday * 2 + topic_offset) % len(TOPICS)
     topic = TOPICS[index]
     print(f"Topic: {topic}")
+
+    # Get image
+    img_url, alt, credit_name, credit_link = get_image(topic)
+
+    # Build image markdown
+    if img_url:
+        if credit_name and credit_link:
+            image_md = f'![{alt}]({img_url})\n*Photo by [{credit_name}]({credit_link}) on Unsplash*\n'
+        else:
+            image_md = f'![{alt}]({img_url})\n'
+    else:
+        image_md = ""
 
     prompt = f"""Write a high-quality, engaging blog post about: "{topic}"
 
@@ -80,8 +130,12 @@ Only return the Markdown content. No extra explanations."""
 
     content = call_groq(prompt)
 
+    # Extract title
     title_match = re.search(r'^# (.+)', content, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else topic.title()
+
+    # Remove # title line from content body
+    body = re.sub(r'^# .+\n', '', content, count=1).strip()
 
     slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:50]
     date_str = today.strftime('%Y-%m-%d')
@@ -93,9 +147,11 @@ title: "{title}"
 date: {date_str} {hour}:00:00 +0000
 categories: [blog]
 description: "A blog post about {topic}"
+image: {img_url or ''}
 ---
 
-{content}
+{image_md}
+{body}
 """
 
     os.makedirs('_posts', exist_ok=True)
