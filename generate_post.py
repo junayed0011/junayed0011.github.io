@@ -4,7 +4,7 @@ import os
 import re
 import time
 
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+GROQ_API_KEY = os.environ["GROQ_API_KEY"]
 
 TOPICS = [
     "how artificial intelligence is changing everyday life",
@@ -29,27 +29,28 @@ TOPICS = [
     "simple ways to improve your focus daily",
 ]
 
-def call_gemini(prompt):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+def call_groq(prompt):
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
     payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.8, "maxOutputTokens": 2048}
+        "model": "llama-3.1-8b-instant",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.8,
+        "max_tokens": 2048
     }
 
-    for attempt in range(5):
+    for attempt in range(3):
         print(f"Attempt {attempt + 1}...")
-        response = requests.post(url, json=payload)
+        response = requests.post(url, headers=headers, json=payload)
 
         if response.status_code == 200:
-            data = response.json()
-            if "candidates" in data:
-                return data["candidates"][0]["content"]["parts"][0]["text"]
-            else:
-                print(f"Unexpected response: {data}")
-                raise Exception("No candidates in response")
+            return response.json()["choices"][0]["message"]["content"]
 
         elif response.status_code == 429:
-            wait = 30 * (attempt + 1)
+            wait = 20 * (attempt + 1)
             print(f"Rate limited. Waiting {wait} seconds...")
             time.sleep(wait)
 
@@ -57,7 +58,7 @@ def call_gemini(prompt):
             print(f"Error {response.status_code}: {response.text}")
             response.raise_for_status()
 
-    raise Exception("All retry attempts failed due to rate limiting.")
+    raise Exception("All retry attempts failed.")
 
 def generate_post(topic_offset=0):
     today = datetime.date.today()
@@ -77,13 +78,11 @@ Format in Markdown:
 
 Only return the Markdown content. No extra explanations."""
 
-    content = call_gemini(prompt)
+    content = call_groq(prompt)
 
-    # Extract title
     title_match = re.search(r'^# (.+)', content, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else topic.title()
 
-    # Build slug
     slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:50]
     date_str = today.strftime('%Y-%m-%d')
     hour = "07" if topic_offset == 0 else "19"
