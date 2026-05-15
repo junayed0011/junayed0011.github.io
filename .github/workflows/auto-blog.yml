@@ -1,0 +1,44 @@
+name: Auto Blog Post Twice Daily
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 7 AM UTC every day
+    - cron: '0 19 * * *'  # 7 PM UTC every day
+  workflow_dispatch:        # Manual trigger anytime
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate Morning Post
+        if: github.event.schedule == '0 7 * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          POST_OFFSET: '0'
+        run: python generate_post.py
+
+      - name: Generate Evening Post
+        if: github.event.schedule == '0 19 * * *'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          POST_OFFSET: '1'
+        run: python generate_post.py
+
+      - name: Commit and Push
+        run: |
+          git config user.name "BlogBot"
+          git config user.email "bot@blog.com"
+          git add _posts/
+          git diff --staged --quiet || git commit -m "Auto post $(date +'%Y-%m-%d %H:%M')"
+          git push
