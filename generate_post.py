@@ -3,9 +3,16 @@ import datetime
 import os
 import re
 import time
+import json
+import markdown
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 GROQ_API_KEY = os.environ["GROQ_API_KEY"]
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "")
+
+BLOG_ID = os.environ["BLOGGER_BLOG_ID"]
+SERVICE_ACCOUNT_JSON = json.loads(os.environ["BLOGGER_SERVICE_ACCOUNT"])
 
 TOPICS = [
     "how artificial intelligence is changing everyday life",
@@ -154,14 +161,23 @@ image: {img_url or ''}
 {body}
 """
 
-    os.makedirs('_posts', exist_ok=True)
-    suffix = "am" if topic_offset == 0 else "pm"
-    filepath = f"_posts/{date_str}-{suffix}-{slug}.md"
-
-    with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(post)
-
-    print(f"✅ Generated: {filepath}")
+    html_body = markdown.markdown(body)
+    if img_url:
+        html_body = f'<img src="{img_url}" alt="{alt}" style="width:100%"/>\n' + html_body
+    creds = service_account.Credentials.from_service_account_info(
+        SERVICE_ACCOUNT_JSON,
+        scopes=["https://www.googleapis.com/auth/blogger"]
+    )
+    service = build("blogger", "v3", credentials=creds)
+    post_body = {
+        "title": title,
+        "content": html_body,
+        "labels": [topic.split()[0].title(), "Blog"],
+    }
+    result = service.posts().insert(
+        blogId=BLOG_ID, body=post_body, isDraft=False
+    ).execute()
+    print(f"✅ Published: {result['url']}")
 
 if __name__ == "__main__":
     offset = int(os.environ.get("POST_OFFSET", "0"))
