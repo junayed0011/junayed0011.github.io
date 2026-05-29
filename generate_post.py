@@ -6,6 +6,8 @@ import time
 import json
 import markdown
 from google.oauth2 import service_account
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 import trends_researcher
 
@@ -101,6 +103,45 @@ def load_monetization_offer(category):
             return data["offers"].get(category)
     except Exception as e:
         print(f"[ERROR] Failed to load monetization config: {e}")
+    return None
+
+def get_blogger_service():
+    """Dynamically authenticates with Blogger API using either OAuth Refresh Token or Service Account."""
+    client_id = os.environ.get("BLOGGER_CLIENT_ID", "")
+    client_secret = os.environ.get("BLOGGER_CLIENT_SECRET", "")
+    refresh_token = os.environ.get("BLOGGER_REFRESH_TOKEN", "")
+
+    # Method A: OAuth 2.0 Client Credentials with Refresh Token
+    if client_id and client_secret and refresh_token:
+        try:
+            creds = Credentials(
+                token=None,
+                refresh_token=refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=client_id,
+                client_secret=client_secret
+            )
+            # Refresh access token
+            creds.refresh(Request())
+            service = build("blogger", "v3", credentials=creds)
+            print("[AUTH] Successfully authenticated using OAuth 2.0 Refresh Token.")
+            return service
+        except Exception as e:
+            print(f"[AUTH] OAuth 2.0 Refresh Token authentication failed: {e}")
+
+    # Method B: Google Cloud Service Account
+    if SERVICE_ACCOUNT_JSON:
+        try:
+            creds = service_account.Credentials.from_service_account_info(
+                SERVICE_ACCOUNT_JSON,
+                scopes=["https://www.googleapis.com/auth/blogger"]
+            )
+            service = build("blogger", "v3", credentials=creds)
+            print("[AUTH] Successfully authenticated using Service Account.")
+            return service
+        except Exception as e:
+            print(f"[AUTH] Service Account authentication failed: {e}")
+
     return None
 
 def generate_post(topic_offset=0):
@@ -211,19 +252,13 @@ Embracing this development will position you at the forefront of the industry.
     final_html = image_html + html_content
 
     # Deploy to Blogger
-    if SERVICE_ACCOUNT_JSON and BLOG_ID:
+    service = get_blogger_service()
+    if service and BLOG_ID:
         try:
-            creds = service_account.Credentials.from_service_account_info(
-                SERVICE_ACCOUNT_JSON,
-                scopes=["https://www.googleapis.com/auth/blogger"]
-            )
-            service = build("blogger", "v3", credentials=creds)
-            
             post_body = {
                 "title": title,
                 "content": final_html,
                 "labels": [category.title(), "Blog", "Trending"],
-                # We can also add dynamic search meta description if Blogger's API supports it
             }
             
             result = service.posts().insert(
