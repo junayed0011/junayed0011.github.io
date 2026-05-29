@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Pulse — Premium Viral News & Daily Insights</title>
+    <meta name="description" content="Your daily source for high-impact insights on artificial intelligence, personal finance, health, productivity, and modern lifestyle habits. Stay informed with The Daily Pulse.">
+    
+    <!-- Premium Typography & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Link Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Scroll Progress Indicator -->
+    <div id="scroll-progress-bar"></div>    <!-- Ticker / Announcement Bar -->
+    <div class="announcement-ticker-wrap">
+        <div class="ticker-container">
+            <span class="ticker-label"><i class="fa-solid fa-fire"></i> Trending Now</span>
+            <div class="ticker-scroll-track">
+                <div class="ticker-content">
+                    <span class="ticker-item">#ArtificialIntelligence changing daily lives</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#SideHustles to start in 2026 with $0</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#Mindfulness habits for stress relief</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#PersonalFinance &amp; budgeting made simple</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Main Navigation -->
+    <header class="main-header">
+        <div class="header-inner container">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-logo" id="header-logo">
+                <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                <span class="pulse-dot"></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="main-nav" id="desktop-nav" aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active" data-category="all">Home</a></li>
+                    <li><a href="#" class="nav-link" data-category="tech">Tech</a></li>
+                    <li><a href="#" class="nav-link" data-category="finance">Finance</a></li>
+                    <li><a href="#" class="nav-link" data-category="lifestyle">Lifestyle</a></li>
+                    <li><a href="#" class="nav-link" data-category="mindset">Mindset</a></li>
+                </ul>
+            </nav>
+
+            <!-- Actions Bar: Search, Dark Mode, Mobile Menu -->
+            <div class="header-actions">
+                <!-- Theme Switcher -->
+                <button class="theme-toggle" id="theme-mode-btn" aria-label="Toggle Dark Mode">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb">
+                            <i class="fa-solid fa-sun icon-sun"></i>
+                            <i class="fa-solid fa-moon icon-moon"></i>
+                        </span>
+                    </span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-toggle" id="menu-toggle-btn" aria-label="Open Mobile Menu">
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-nav-drawer">
+        <div class="drawer-header">
+            <a href="#" class="brand-logo">
+                <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                <span class="pulse-dot"></span>
+            </a>
+            <button class="close-drawer" id="close-drawer-btn" aria-label="Close Mobile Menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile Navigation">
+            <ul class="mobile-nav-links">
+                <li><a href="#" class="mobile-nav-link active" data-category="all">Home</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="tech">Tech</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="finance">Finance</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="lifestyle">Lifestyle</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="mindset">Mindset</a></li>
+            </ul>
+        </nav>
+        <div class="drawer-footer">
+            <p class="drawer-motto">Insights that shape the future.</p>
+        </div>
+    </div>
+    <div class="drawer-backdrop" id="drawer-backdrop-overlay"></div>
+
+    <!-- Main Layout Wrapper -->
+    <main class="main-content-layout container">
+        
+        <!-- MONETIZATION: Premium Leaderboard Ad Placement -->
+        <div class="ad-container ad-leaderboard-wrap" id="ad-leaderboard-top">
+            <div class="ad-label">Sponsored Advertisement</div>
+            <div class="ad-placeholder-graphic">
+                <div class="ad-glow"></div>
+                <div class="ad-info-text">
+                    <span class="ad-dimensions">970 × 90 px Leaderboard Ad</span>
+                    <span class="ad-subtext">Premium High-CPM programmatic placement</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Hero Editorial Grid -->
+        <section class="hero-editorial-section" id="hero-section">
+            <div class="hero-grid">
+                <!-- Large Featured Article (Left/Main) -->
+                <article class="featured-card featured-main" id="main-featured-article">
+                    <div class="card-bg-wrap">
+                        <div class="card-bg-image" id="featured-hero-bg"></div>
+                        <div class="card-gradient-overlay"></div>
+                    </div>
+                    <div class="featured-content">
+                        <span class="badge badge-accent animate-pulse" id="featured-hero-tag">Tech</span>
+                        <div class="meta-row">
+                            <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="featured-hero-readtime">5 min read</span></span>
+                            <span class="meta-item"><i class="fa-regular fa-calendar"></i> <span id="featured-hero-date">May 20, 2026</span></span>
+                        </div>
+                        <h1 class="featured-title" id="featured-hero-title">How Artificial Intelligence is Changing Everyday Life</h1>
+                        <p class="featured-excerpt" id="featured-hero-excerpt">Artificial intelligence (AI) is increasingly being integrated into our homes, making our lives more convenient, highly productive, and uniquely personalized...</p>
+                        <a href="#feed-anchor" class="btn btn-primary" id="featured-hero-btn">Read full story <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Small Features Side List (Right Column) -->
+                <div class="hero-sub-column">
+                    <!-- Secondary Post 1 -->
+                    <article class="sub-featured-card" id="sub-post-1">
+                        <div class="sub-card-bg-wrap">
+                            <div class="sub-card-bg-image" id="sub-bg-1"></div>
+                            <div class="sub-card-overlay"></div>
+                        </div>
+                        <div class="sub-card-content">
+                            <span class="badge badge-secondary" id="sub-tag-1">Finance</span>
+                            <h2 class="sub-card-title" id="sub-title-1">Saving Money on a Tight Budget: Proven Tactics</h2>
+                            <div class="meta-row">
+                                <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="sub-read-1">4 min read</span></span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Secondary Post 2 -->
+                    <article class="sub-featured-card" id="sub-post-2">
+                        <div class="sub-card-bg-wrap">
+                            <div class="sub-card-bg-image" id="sub-bg-2"></div>
+                            <div class="sub-card-overlay"></div>
+                        </div>
+                        <div class="sub-card-content">
+                            <span class="badge badge-secondary" id="sub-tag-2">Mindset</span>
+                            <h2 class="sub-card-title" id="sub-title-2">Cultivating Calm: Daily Mindfulness Habits</h2>
+                            <div class="meta-row">
+                                <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="sub-read-2">3 min read</span></span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Search, Category Quick-Filters & Dynamic News Feed Grid -->
+        <span id="feed-anchor" class="anchor-offset"></span>
+        <section class="news-feed-section">
+            
+            <!-- Sticky Search & Filter Header Bar -->
+            <div class="feed-control-bar" id="filter-bar">
+                <div class="feed-control-inner">
+                    <!-- Category Pills -->
+                    <div class="category-pills-wrap">
+                        <button class="pill active" data-filter="all">All Stories</button>
+                        <button class="pill" data-filter="tech">Tech</button>
+                        <button class="pill" data-filter="finance">Finance</button>
+                        <button class="pill" data-filter="lifestyle">Lifestyle</button>
+                        <button class="pill" data-filter="mindset">Mindset</button>
+                    </div>
+
+                    <!-- Search Input Box -->
+                    <div class="search-box-wrap">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="feed-search-input" placeholder="Search daily insights..." aria-label="Search articles">
+                        <button id="clear-search-btn" class="clear-search" aria-label="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Feed & Sidebar Layout Grid -->
+            <div class="layout-grid-columns">
+                <!-- Column 1: News Feed Column -->
+                <div class="main-news-feed">
+                    
+                    <!-- Search Results Header (hidden by default) -->
+                    <div class="search-result-status" id="search-result-banner" style="display: none;">
+                        <span class="status-text">Showing matches for: "<strong id="search-query-highlight"></strong>"</span>
+                        <button class="reset-filter-btn" id="reset-search-btn">Reset</button>
+                    </div>
+
+                    <!-- Active Grid for Post Cards -->
+                    <div class="posts-cards-grid" id="news-posts-container">
+                        <!-- Dynamic Post Cards Injected via JS -->
+                        <!-- Skeleton Loading States are generated during transitions -->
+                    </div>
+
+                    <!-- Empty State for Search -->
+                    <div class="feed-empty-state" id="empty-state-notice" style="display: none;">
+                        <div class="empty-icon"><i class="fa-regular fa-folder-open"></i></div>
+                        <h3>No Articles Found</h3>
+                        <p>We couldn't find any articles matching your search query. Try broadening your keywords or exploring another category.</p>
+                        <button class="btn btn-secondary" id="clear-all-filters-btn">Browse All Stories</button>
+                    </div>
+
+                    <!-- MONETIZATION: Mid-Feed Dynamic Banner Placement -->
+                    <div class="ad-container ad-in-feed-wrap" id="ad-mid-feed">
+                        <div class="ad-label">Sponsored Advertisement</div>
+                        <div class="ad-placeholder-graphic">
+                            <div class="ad-glow"></div>
+                            <div class="ad-info-text">
+                                <span class="ad-dimensions">728 × 90 px Mid-Feed Banner Ad</span>
+                                <span class="ad-subtext">Highly engaging contextual advertising banner</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Column 2: Interactive Sidebar Column -->
+                <aside class="sidebar-aside" id="main-sidebar">
+
+                    <!-- MONETIZATION & CONVERSION: High-Converting Newsletter Widget -->
+                    <div class="sidebar-widget newsletter-widget" id="sidebar-newsletter-card">
+                        <div class="widget-decor-bg"></div>
+                        <div class="widget-content">
+                            <span class="widget-meta">JOIN THE PULSE</span>
+                            <h3 class="widget-title">Insights That Shape The Future</h3>
+                            <p class="widget-desc">Join over 50,000+ forward-thinking professionals who receive our curated daily digest directly in their inbox.</p>
+                            
+                            <!-- Conversion Capture Form -->
+                            <form id="newsletter-form-sidebar" class="widget-form">
+                                <div class="input-glow-group">
+                                    <input type="email" id="newsletter-email-sidebar" class="glow-input" placeholder="Your primary email address" required aria-label="Email address">
+                                    <span class="focus-border-glow"></span>
+                                </div>
+                                <button type="submit" class="btn btn-submit-glow" id="newsletter-submit-btn">
+                                    <span class="btn-text">Subscribe to Pulse <i class="fa-solid fa-paper-plane"></i></span>
+                                    <span class="btn-spinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                                </button>
+                            </form>
+                            
+                            <!-- Success State (hidden initially) -->
+                            <div class="widget-success-state" id="newsletter-success-box" style="display: none;">
+                                <div class="success-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
+                                <h4>Welcome to The Daily Pulse!</h4>
+                                <p>You're in. We've sent a quick welcome briefing to your email address.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending Widget (Editorial Rank List) -->
+                    <div class="sidebar-widget trending-list-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-heading-title"><i class="fa-solid fa-arrow-trend-up"></i> Trending Now</h3>
+                        </div>
+                        <div class="trending-rank-list" id="trending-posts-sidebar-list">
+                            <!-- Dynamic Rank Items Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- MONETIZATION: Sticky Skyscraper Ad Placeholder -->
+                    <div class="ad-container ad-skyscraper-wrap" id="ad-skyscraper-sidebar">
+                        <div class="ad-label">Sponsored Advertisement</div>
+                        <div class="ad-placeholder-graphic">
+                            <div class="ad-glow"></div>
+                            <div class="ad-info-text">
+                                <span class="ad-dimensions">300 × 600 px Half-Page / Skyscraper Ad</span>
+                                <span class="ad-subtext">Premium high-impact visual banner</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="main-footer">
+        <div class="footer-inner container">
+            <!-- Branding Column -->
+            <div class="footer-col footer-col-brand">
+                <a href="#" class="brand-logo">
+                    <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                    <span class="pulse-dot"></span>
+                </a>
+                <p class="footer-about">An ultra-premium news portal engineered for dynamic insights, productivity advice, financial clarity, and cutting-edge tech advancements.</p>
+                <div class="footer-socials">
+                    <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <!-- Links Column 1: Tech & Finance -->
+            <div class="footer-col">
+                <h4 class="footer-title">Channels</h4>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link-item" data-category="tech">Technology</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="finance">Personal Finance</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="lifestyle">Modern Lifestyle</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="mindset">Mindset & Habits</a></li>
+                </ul>
+            </div>
+
+            <!-- Links Column 2: Legal & About -->
+            <div class="footer-col">
+                <h4 class="footer-title">The Portal</h4>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link-item">About The Pulse</a></li>
+                    <li><a href="#" class="footer-link-item">Editorial Standards</a></li>
+                    <li><a href="#" class="footer-link-item">Sponsorship Kits</a></li>
+                    <li><a href="#" class="footer-link-item">Privacy & Terms</a></li>
+                </ul>
+            </div>
+
+            <!-- newsletter form bottom -->
+            <div class="footer-col footer-col-newsletter">
+                <h4 class="footer-title">Fast Delivery</h4>
+                <p class="footer-news-desc">Get raw briefings sent twice daily directly from our editorial desk.</p>
+                <form id="newsletter-form-footer" class="footer-form">
+                    <div class="footer-input-wrap">
+                        <input type="email" id="newsletter-email-footer" placeholder="Enter email address" required aria-label="Email address for footer newsletter">
+                        <button type="submit" class="btn-footer-submit" aria-label="Submit Newsletter Form"><i class="fa-solid fa-arrow-right-long"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sub-Footer / Copyright -->
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p class="copyright-text">&copy; 2026 The Daily Pulse. Engineered with premium design aesthetics. All rights reserved.</p>
+                <p class="branding-credits">Powered by Autopilot blogging engine & Gemini 3.5 High.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+
+    <!-- V3 Premium Elastic Share Toast Alert -->
+    <div id="share-toast">
+        <i class="fa-solid fa-circle-check" style="color:#10B981; font-size:16px;"></i>
+        <span>Briefing link copied to clipboard!</span>
+    </div>
+</body>
+</html>

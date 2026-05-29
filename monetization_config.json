@@ -1,0 +1,28 @@
+{
+  "offers": {
+    "tech": {
+      "product_name": "Premium AI Developer & Prompting Toolkit",
+      "referral_url": "https://clickbank.com/affiliate-placeholder-tech?track=autoblog",
+      "callout_title": "🚀 High-Value Resource for Tech Enlistees",
+      "copywriting": "If you are looking to master artificial intelligence, automate your programming workflow, or build your own AI SaaS products, we highly recommend downloading the **Premium AI Developer & Prompting Toolkit**. It contains 500+ production-ready prompts, automation workflows, and templates designed to double your productivity."
+    },
+    "finance": {
+      "product_name": "The Wealth Accelerator: Strategic Passive Income & Index Investing Guide",
+      "referral_url": "https://clickbank.com/affiliate-placeholder-finance?track=autoblog",
+      "callout_title": "📈 Strategic Financial Briefing",
+      "copywriting": "To accelerate your path to early retirement and protect your emergency cash from high inflation, review **The Wealth Accelerator investing program**. This comprehensive guide delivers a step-by-step masterclass on building recession-proof dividend portfolios, low-cost indexing options, and passive real estate trusts."
+    },
+    "lifestyle": {
+      "product_name": "The Holistic Health & Natural Biohacking Protocol",
+      "referral_url": "https://clickbank.com/affiliate-placeholder-lifestyle?track=autoblog",
+      "callout_title": "🍏 Editor's Choice Health Companion",
+      "copywriting": "Achieve sustained mental clarity, optimize sleep quality, and reset your natural biological clock. Download **The Holistic Health & Natural Biohacking Protocol**, the industry-leading digital guide covering science-backed morning habits, natural supplement schedules, and active metabolic nutrition maps."
+    },
+    "mindset": {
+      "product_name": "The Superhuman Focus & Cognitive Productivity Masterclass",
+      "referral_url": "https://clickbank.com/affiliate-placeholder-mindset?track=autoblog",
+      "callout_title": "🧠 Peak Cognitive Performance",
+      "copywriting": "Struggling with focus, procrastination, and lack of clarity? Unlock your mind's true processing power with **The Superhuman Focus Masterclass**. Learn the exact focus strategies and daily productivity frameworks used by top CEOs, artists, and peak performance biohackers to get 8 hours of work done in 3."
+    }
+  }
+}

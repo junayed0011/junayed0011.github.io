@@ -1,0 +1,2715 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultmessages='false' b:responsive='true' b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/schemas/b/template/b' xmlns:data='http://www.google.com/schemas/b/template/data' xmlns:expr='http://www.google.com/jsexpr'>
+<head>
+    <meta content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1' name='viewport'/>
+    <title><data:blog.pageTitle/></title>
+    
+    <!-- Premium Typography and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <b:skin><![CDATA[
+    /* ---------------------------------------------------------------------
+    THE DAILY PULSE — NATIVE BLOGGER XML OVERLAY
+    Theme configuration skin requirements. Do not remove.
+    --------------------------------------------------------------------- */
+    ]]></b:skin>
+    
+    <style>
+    /* ==========================================================================
+       THE DAILY PULSE — PREMIUM STYLESHEET
+       ========================================================================== */
+    *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    :root {
+        --font-heading: 'Playfair Display', Georgia, serif;
+        --font-body: 'Outfit', 'Inter', sans-serif;
+        --theme-transition: cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+        --container-max-width: 1200px;
+        --border-radius-sm: 4px;
+        --border-radius-md: 10px;
+        --border-radius-lg: 18px;
+        --border-radius-xl: 30px;
+
+        /* LIGHT MODE PALETTE */
+        --bg-primary: #FAF9F6;
+        --bg-surface: #FFFFFF;
+        --text-primary: #111111;
+        --text-secondary: #5A5E6F;
+        --accent-brand: #C8102E;
+        --accent-brand-rgb: 200, 16, 46;
+        --accent-secondary: #0F172A;
+        --divider: #EAE8E2;
+        --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+        --card-shadow-hover: 0 20px 40px rgba(200, 16, 46, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --glass-border: rgba(234, 232, 226, 0.7);
+        --input-bg: #F3F1EC;
+        --ad-border: rgba(200, 16, 46, 0.15);
+        --ad-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    .dark-theme {
+        /* DARK MODE PALETTE */
+        --bg-primary: #0A0B0E;
+        --bg-surface: #12141C;
+        --text-primary: #F3F4F6;
+        --text-secondary: #9EA2B6;
+        --accent-brand: #FF3366;
+        --accent-brand-rgb: 255, 51, 102;
+        --accent-secondary: #1F2937;
+        --divider: #1E2235;
+        --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        --card-shadow-hover: 0 24px 50px rgba(255, 51, 102, 0.18);
+        --glass-bg: rgba(18, 20, 28, 0.85);
+        --glass-border: rgba(30, 34, 53, 0.7);
+        --input-bg: #1B1D2A;
+        --ad-border: rgba(255, 51, 102, 0.22);
+        --ad-bg: rgba(18, 20, 28, 0.95);
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+        transition: background-color var(--theme-transition), color var(--theme-transition);
+    }
+
+    .container {
+        width: 100%;
+        max-width: var(--container-max-width);
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    button {
+        background: none;
+        border: none;
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .anchor-offset {
+        display: block;
+        position: relative;
+        top: -110px;
+        visibility: hidden;
+    }
+
+    #scroll-progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-brand), #FFD700);
+        width: 0%;
+        z-index: 1000;
+        transition: width 0.1s ease-out;
+    }
+
+    .announcement-ticker-wrap {
+        background-color: var(--text-primary);
+        color: var(--bg-surface);
+        height: 34px;
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--divider);
+        z-index: 999;
+        position: relative;
+    }
+
+    .ticker-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: var(--container-max-width);
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .ticker-label {
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: var(--border-radius-sm);
+        margin-right: 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 2px 5px rgba(var(--accent-brand-rgb), 0.3);
+    }
+
+    .ticker-scroll-track {
+        flex-grow: 1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    .ticker-content {
+        display: inline-flex;
+        align-items: center;
+        padding-left: 20px;
+        animation: ticker-slide 20s linear infinite;
+    }
+
+    .ticker-content:hover {
+        animation-play-state: paused;
+    }
+
+    .ticker-item {
+        display: inline-block;
+        padding-right: 35px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .ticker-item:hover {
+        color: var(--accent-brand);
+    }
+
+    .ticker-divider {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: var(--accent-brand);
+        border-radius: 50%;
+        margin-right: 35px;
+        vertical-align: middle;
+    }
+
+    @keyframes ticker-slide {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-50%, 0, 0); }
+    }
+
+    .main-header {
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 990;
+        transition: background-color var(--theme-transition), border-color var(--theme-transition);
+    }
+
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .logo-text {
+        font-family: var(--font-heading);
+        font-weight: 900;
+        font-size: 26px;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--text-primary) 20%, var(--accent-brand) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .logo-text:hover {
+        transform: scale(1.02);
+    }
+
+    .logo-highlight {
+        color: var(--accent-brand);
+        position: relative;
+        display: inline-block;
+        transition: color var(--theme-transition);
+        background: linear-gradient(135deg, var(--accent-brand) 0%, #FF5E62 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent-brand);
+        border-radius: 50%;
+        display: inline-block;
+        animation: heart-pulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes heart-pulse {
+        0%, 100% {
+            transform: scale(0.8);
+            box-shadow: 0 0 0 0 rgba(var(--accent-brand-rgb), 0.7);
+        }
+        50% {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 8px rgba(var(--accent-brand-rgb), 0);
+        }
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 36px;
+    }
+
+    .nav-link {
+        font-weight: 500;
+        font-size: 15px;
+        color: var(--text-secondary);
+        padding: 6px 0;
+        position: relative;
+        transition: color 0.2s ease;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--accent-brand);
+        transition: width 0.3s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+        color: var(--text-primary);
+    }
+
+    .nav-link.active::after {
+        width: 100%;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .theme-toggle {
+        width: 58px;
+        height: 30px;
+        background: linear-gradient(135deg, #FF9F0A 0%, #FF3B30 100%);
+        border-radius: 30px;
+        position: relative;
+        padding: 3px;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(255, 159, 10, 0.2);
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .theme-toggle::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
+        opacity: 0;
+        transition: opacity var(--theme-transition);
+        z-index: -1;
+    }
+
+    .dark-theme .theme-toggle::before {
+        opacity: 1;
+    }
+
+    .dark-theme .theme-toggle {
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 10px rgba(79, 70, 229, 0.25);
+    }
+
+    .toggle-track {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: relative;
+        z-index: 2;
+    }
+
+    .toggle-thumb {
+        width: 24px;
+        height: 24px;
+        background-color: var(--bg-surface);
+        border-radius: 50%;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 3;
+    }
+
+    .dark-theme .toggle-thumb {
+        transform: translateX(28px);
+    }
+
+    .toggle-thumb i {
+        font-size: 12px;
+        position: absolute;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .icon-sun {
+        color: #FFB800;
+        opacity: 1;
+    }
+
+    .icon-moon {
+        color: #A5B4FC;
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    .dark-theme .icon-sun {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    .dark-theme .icon-moon {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 24px;
+        height: 16px;
+    }
+
+    .burger-bar {
+        width: 100%;
+        height: 2px;
+        background-color: var(--text-primary);
+        border-radius: 2px;
+        transition: background-color var(--theme-transition);
+    }
+
+    .mobile-drawer {
+        position: fixed;
+        top: 0;
+        right: -320px;
+        width: 300px;
+        height: 100%;
+        background-color: var(--bg-surface);
+        z-index: 1001;
+        padding: 30px 24px;
+        box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-drawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 50px;
+    }
+
+    .close-drawer {
+        font-size: 24px;
+        color: var(--text-primary);
+    }
+
+    .mobile-nav-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .mobile-nav-link {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        display: block;
+        padding: 8px 0;
+    }
+
+    .mobile-nav-link.active, .mobile-nav-link:hover {
+        color: var(--accent-brand);
+    }
+
+    .drawer-footer {
+        margin-top: auto;
+        border-top: 1px solid var(--divider);
+        padding-top: 20px;
+    }
+
+    .drawer-motto {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    .drawer-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .drawer-backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .ad-container {
+        width: 100%;
+        margin: 35px auto;
+        text-align: center;
+        position: relative;
+    }
+
+    .ad-label {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        display: block;
+        opacity: 0.8;
+    }
+
+    .ad-placeholder-graphic {
+        background-color: var(--ad-bg);
+        border: 1px dashed var(--ad-border);
+        border-radius: var(--border-radius-md);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.3s ease, background-color var(--theme-transition);
+    }
+
+    .ad-placeholder-graphic::before {
+        content: 'AD';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+        font-weight: 900;
+        color: var(--text-secondary);
+        opacity: 0.03;
+        letter-spacing: 15px;
+    }
+
+    .ad-glow {
+        position: absolute;
+        width: 160px;
+        height: 100%;
+        top: 0;
+        left: -160px;
+        background: linear-gradient(90deg, transparent, rgba(var(--accent-brand-rgb), 0.05), transparent);
+        animation: ad-shimmer 3.5s infinite ease-in-out;
+    }
+
+    @keyframes ad-shimmer {
+        0% { left: -160px; }
+        50% { left: 100%; }
+        100% { left: 100%; }
+    }
+
+    .ad-info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        z-index: 2;
+        padding: 20px;
+    }
+
+    .ad-dimensions {
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .ad-subtext {
+        font-size: 11px;
+        color: var(--text-secondary);
+    }
+
+    .ad-leaderboard-wrap .ad-placeholder-graphic {
+        min-height: 98px;
+    }
+
+    .ad-in-feed-wrap {
+        margin: 40px 0;
+    }
+
+    .ad-in-feed-wrap .ad-placeholder-graphic {
+        min-height: 98px;
+    }
+
+    .ad-skyscraper-wrap {
+        margin-top: 30px;
+    }
+
+    .ad-skyscraper-wrap .ad-placeholder-graphic {
+        min-height: 480px;
+    }
+
+    .hero-editorial-section {
+        margin-top: 15px;
+        margin-bottom: 45px;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        min-height: 520px;
+    }
+
+    .featured-card {
+        position: relative;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card-bg-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .card-bg-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .featured-card:hover .card-bg-image {
+        transform: scale(1.05);
+    }
+
+    .card-gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0.88) 100%);
+        z-index: 2;
+    }
+
+    .featured-content {
+        position: relative;
+        z-index: 3;
+        padding: 45px;
+        color: #FFFFFF;
+        max-width: 90%;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+    }
+
+    .badge-accent {
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+        box-shadow: 0 4px 10px rgba(var(--accent-brand-rgb), 0.4);
+    }
+
+    .badge-secondary {
+        background-color: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        color: #FFFFFF;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Premium V3 Category-Specific Gradient Badges */
+    .badge-tech, .badge-technology, .badge-artificialintelligence {
+        background: linear-gradient(135deg, #7F00FF 0%, #FF007F 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(127, 0, 255, 0.35) !important;
+        border: none !important;
+    }
+
+    .badge-finance, .badge-money, .badge-investing, .badge-budgeting {
+        background: linear-gradient(135deg, #02AAB0 0%, #00CDAC 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(2, 170, 176, 0.35) !important;
+        border: none !important;
+    }
+
+    .badge-lifestyle, .badge-health, .badge-diet {
+        background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(255, 65, 108, 0.35) !important;
+        border: none !important;
+    }
+
+    .badge-mindset, .badge-productivity, .badge-focus, .badge-habits {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(0, 198, 255, 0.35) !important;
+        border: none !important;
+    }
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 16px;
+        font-weight: 500;
+    }
+
+    .meta-row i {
+        margin-right: 4px;
+    }
+
+    .featured-title {
+        font-family: var(--font-heading);
+        font-size: 38px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-bottom: 16px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .featured-excerpt {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 24px;
+        max-width: 600px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: var(--border-radius-md);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+        z-index: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent-brand) 0%, #FF5E62 100%);
+        color: #FFFFFF;
+        box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.35);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        color: #FFFFFF;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 25px rgba(var(--accent-brand-rgb), 0.5);
+    }
+
+    /* Stripe-Style Metallic Shimmer Swipe Effect */
+    .btn-primary::after, .btn-submit-glow::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 80%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+        transform: skewX(-25deg);
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .btn-primary:hover::after, .btn-submit-glow:hover::after {
+        transform: translateX(380%) skewX(-25deg);
+        transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary:active, .btn-submit-glow:active {
+        transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-secondary {
+        background-color: var(--text-primary);
+        color: var(--bg-surface);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+
+    .hero-sub-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .sub-featured-card {
+        flex: 1;
+        position: relative;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        padding: 24px;
+        box-shadow: var(--card-shadow);
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sub-featured-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-shadow-hover);
+    }
+
+    .sub-card-bg-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .sub-card-bg-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.6s ease;
+    }
+
+    .sub-featured-card:hover .sub-card-bg-image {
+        transform: scale(1.04);
+    }
+
+    .sub-card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%);
+        z-index: 2;
+    }
+
+    .sub-card-content {
+        position: relative;
+        z-index: 3;
+        color: #FFFFFF;
+    }
+
+    .sub-card-title {
+        font-family: var(--font-heading);
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.35;
+        margin-bottom: 12px;
+    }
+
+    .feed-control-bar {
+        position: sticky;
+        top: 72px;
+        z-index: 900;
+        margin-bottom: 35px;
+        background-color: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius-md);
+        padding: 14px 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        transition: top var(--theme-transition), background-color var(--theme-transition), border-color var(--theme-transition);
+    }
+
+    .feed-control-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .category-pills-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .category-pills-wrap::-webkit-scrollbar {
+        display: none;
+    }
+
+    .pill {
+        white-space: nowrap;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        border-radius: var(--border-radius-xl);
+        background-color: transparent;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pill:hover {
+        color: var(--text-primary);
+        background-color: var(--input-bg);
+    }
+
+    .pill.active {
+        color: #FFFFFF;
+        background-color: var(--accent-brand);
+        box-shadow: 0 4px 10px rgba(var(--accent-brand-rgb), 0.25);
+    }
+
+    .search-box-wrap {
+        position: relative;
+        width: 280px;
+        display: flex;
+        align-items: center;
+        transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (min-width: 769px) {
+        .search-box-wrap:focus-within {
+            width: 340px;
+        }
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        pointer-events: none;
+    }
+
+    #feed-search-input {
+        width: 100%;
+        height: 40px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--divider);
+        border-radius: var(--border-radius-xl);
+        padding: 0 40px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #feed-search-input:focus {
+        outline: none;
+        border-color: var(--accent-brand);
+        background-color: var(--bg-surface);
+        box-shadow: 0 0 0 4px rgba(var(--accent-brand-rgb), 0.18);
+    }
+
+    .clear-search {
+        position: absolute;
+        right: 14px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        display: none;
+    }
+
+    .clear-search:hover {
+        color: var(--text-primary);
+    }
+
+    .search-result-status {
+        background-color: var(--input-bg);
+        border-radius: var(--border-radius-sm);
+        padding: 10px 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .reset-filter-btn {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-brand);
+        text-transform: uppercase;
+    }
+
+    .layout-grid-columns {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 36px;
+    }
+
+    .posts-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+    }
+
+    .post-card {
+        background-color: var(--bg-surface);
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--divider);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .post-card:hover {
+        transform: translateY(-8px) scale(1.015);
+        box-shadow: 0 20px 40px rgba(var(--accent-brand-rgb), 0.12), var(--card-shadow-hover);
+        border-color: var(--accent-brand);
+    }
+
+    .card-img-wrap {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .card-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .post-card:hover .card-img {
+        transform: scale(1.04);
+    }
+
+    .card-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 2;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: background-color var(--theme-transition), color var(--theme-transition);
+    }
+
+    .post-card:hover .card-badge {
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+    }
+
+    .card-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+
+    .card-meta-dot {
+        width: 4px;
+        height: 4px;
+        background-color: var(--divider);
+        border-radius: 50%;
+    }
+
+    .card-headline {
+        font-family: var(--font-heading);
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+        transition: color 0.2s ease;
+    }
+
+    .post-card:hover .card-headline {
+        color: var(--accent-brand);
+    }
+
+    .card-description {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--divider);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .author-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .author-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--input-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+
+    .author-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .read-more-link {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-brand);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .read-more-link i {
+        transition: transform 0.2s ease;
+    }
+
+    .post-card:hover .read-more-link i {
+        transform: translateX(3px);
+    }
+
+    .skeleton-card {
+        min-height: 400px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--divider);
+        border-radius: var(--border-radius-lg);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .skeleton-img {
+        height: 180px;
+        background: linear-gradient(90deg, var(--input-bg) 25%, var(--divider) 50%, var(--input-bg) 75%);
+        background-size: 200% 100%;
+        animation: skeleton-pulse 1.5s infinite;
+        border-radius: var(--border-radius-md);
+    }
+
+    .skeleton-text {
+        height: 20px;
+        background: linear-gradient(90deg, var(--input-bg) 25%, var(--divider) 50%, var(--input-bg) 75%);
+        background-size: 200% 100%;
+        animation: skeleton-pulse 1.5s infinite;
+        border-radius: 4px;
+    }
+
+    .skeleton-title {
+        width: 80%;
+        height: 28px;
+    }
+
+    .skeleton-desc {
+        width: 100%;
+        height: 60px;
+    }
+
+    @keyframes skeleton-pulse {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .feed-empty-state {
+        grid-column: span 2;
+        text-align: center;
+        padding: 60px 40px;
+        border: 1px dashed var(--divider);
+        border-radius: var(--border-radius-lg);
+        background-color: var(--bg-surface);
+    }
+
+    .empty-icon {
+        font-size: 40px;
+        color: var(--text-secondary);
+        opacity: 0.5;
+        margin-bottom: 18px;
+    }
+
+    .feed-empty-state h3 {
+        font-family: var(--font-heading);
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .feed-empty-state p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        max-width: 420px;
+        margin: 0 auto 24px;
+    }
+
+    .sidebar-aside {
+        display: flex;
+        flex-direction: column;
+        gap: 36px;
+    }
+
+    .sidebar-widget {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--divider);
+        border-radius: var(--border-radius-lg);
+        padding: 30px;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        transition: background-color var(--theme-transition), border-color var(--theme-transition);
+    }
+
+    .newsletter-widget {
+        background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(var(--accent-brand-rgb), 0.04) 100%);
+        border: 1px solid var(--ad-border);
+    }
+
+    .widget-decor-bg {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--accent-brand-rgb), 0.08) 0%, transparent 80%);
+        z-index: 1;
+    }
+
+    .widget-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .widget-meta {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: var(--accent-brand);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .widget-title {
+        font-family: var(--font-heading);
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+    }
+
+    .widget-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 24px;
+    }
+
+    .widget-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .input-glow-group {
+        position: relative;
+    }
+
+    .glow-input {
+        width: 100%;
+        height: 48px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--divider);
+        border-radius: var(--border-radius-md);
+        padding: 0 16px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .glow-input:focus {
+        outline: none;
+        border-color: var(--accent-brand);
+        background-color: var(--bg-surface);
+    }
+
+    .focus-border-glow {
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        border-radius: 12px;
+        border: 2px solid var(--accent-brand);
+        pointer-events: none;
+        opacity: 0;
+        transform: scale(0.98);
+        transition: transform 0.25s ease, opacity 0.25s ease;
+        z-index: 1;
+    }
+
+    .glow-input:focus ~ .focus-border-glow {
+        opacity: 0.15;
+        transform: scale(1);
+    }
+
+    .btn-submit-glow {
+        width: 100%;
+        height: 46px;
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+        font-weight: 600;
+        font-size: 13px;
+        border-radius: var(--border-radius-md);
+        box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.3);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-submit-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(var(--accent-brand-rgb), 0.45);
+    }
+
+    .widget-success-state {
+        text-align: center;
+        padding: 10px 0;
+        animation: fade-in-scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .success-icon-wrap {
+        font-size: 38px;
+        color: #10B981;
+        margin-bottom: 12px;
+    }
+
+    .widget-success-state h4 {
+        font-family: var(--font-heading);
+        font-size: 18px;
+        margin-bottom: 6px;
+    }
+
+    .widget-success-state p {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    @keyframes fade-in-scale {
+        0% { opacity: 0; transform: scale(0.95); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .widget-header {
+        border-bottom: 1px solid var(--divider);
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
+
+    .widget-heading-title {
+        font-family: var(--font-heading);
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .widget-heading-title i {
+        color: var(--accent-brand);
+        margin-right: 6px;
+    }
+
+    .trending-rank-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .trending-rank-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        cursor: pointer;
+    }
+
+    .rank-number {
+        font-family: var(--font-heading);
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1;
+        color: var(--accent-brand);
+        opacity: 0.8;
+    }
+
+    .rank-text-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .rank-title {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--text-primary);
+        transition: color 0.2s ease;
+    }
+
+    .trending-rank-item:hover .rank-title {
+        color: var(--accent-brand);
+    }
+
+    .rank-meta {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+
+    .main-footer {
+        background-color: var(--bg-surface);
+        border-top: 1px solid var(--divider);
+        padding-top: 70px;
+        margin-top: 80px;
+        transition: background-color var(--theme-transition), border-color var(--theme-transition);
+    }
+
+    .footer-inner {
+        display: grid;
+        grid-template-columns: 2fr repeat(2, 1fr) 2fr;
+        gap: 40px;
+        padding-bottom: 50px;
+    }
+
+    .footer-col-brand {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .footer-about {
+        font-size: 13px;
+        color: var(--text-secondary);
+        max-width: 320px;
+        line-height: 1.6;
+    }
+
+    .footer-socials {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .social-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--input-bg);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .social-icon:hover {
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+        transform: translateY(-3px);
+    }
+
+    .footer-title {
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+    }
+
+    .footer-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-link-item {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .footer-link-item:hover {
+        color: var(--accent-brand);
+    }
+
+    .footer-col-newsletter {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-news-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+
+    .footer-form {
+        width: 100%;
+    }
+
+    .footer-input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .footer-input-wrap input {
+        width: 100%;
+        height: 44px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--divider);
+        border-radius: var(--border-radius-xl);
+        padding: 0 45px 0 16px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 12px;
+        transition: border-color 0.25s ease;
+    }
+
+    .footer-input-wrap input:focus {
+        outline: none;
+        border-color: var(--accent-brand);
+        background-color: var(--bg-surface);
+    }
+
+    .btn-footer-submit {
+        position: absolute;
+        right: 4px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--accent-brand);
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        transition: transform 0.2s ease;
+    }
+
+    .btn-footer-submit:hover {
+        transform: scale(1.05);
+    }
+
+    .footer-bottom {
+        border-top: 1px solid var(--divider);
+        padding: 24px 0;
+    }
+
+    .footer-bottom-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .branding-credits {
+        text-align: right;
+    }
+
+    .search-highlight {
+        background-color: rgba(255, 215, 0, 0.4);
+        color: inherit;
+        padding: 0 2px;
+        border-radius: 2px;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            padding: 0 20px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .featured-main {
+            min-height: 400px;
+        }
+
+        .hero-sub-column {
+            flex-direction: row;
+        }
+
+        .sub-featured-card {
+            min-height: 200px;
+        }
+
+        .layout-grid-columns {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .ad-skyscraper-wrap {
+            display: none;
+        }
+
+        .sidebar-aside {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .footer-inner {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-header {
+            height: 64px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+        }
+
+        #desktop-nav {
+            display: none;
+        }
+
+        .mobile-menu-toggle {
+            display: flex;
+        }
+
+        .ticker-content {
+            animation-duration: 15s;
+        }
+
+        .ticker-item:nth-child(even) {
+            display: none;
+        }
+
+        .feed-control-inner {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .search-box-wrap {
+            width: 100%;
+        }
+
+        .posts-cards-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .feed-empty-state {
+            grid-column: span 1;
+        }
+
+        .sidebar-aside {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-sub-column {
+            flex-direction: column;
+        }
+
+        .ad-leaderboard-wrap .ad-placeholder-graphic {
+            min-height: 60px;
+        }
+        
+        .ad-dimensions {
+            font-size: 11px;
+        }
+
+        .featured-title {
+            font-size: 28px;
+        }
+
+        .featured-content {
+            padding: 24px;
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 0 16px;
+        }
+
+        .footer-inner {
+            grid-template-columns: 1fr;
+        }
+
+        .footer-bottom-inner {
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .branding-credits {
+            text-align: center;
+        }
+    }
+
+    /* Premium V3 Share Toast and Action Buttons */
+    .share-card-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .share-card-btn:hover {
+        color: var(--accent-brand);
+        transform: scale(1.2);
+    }
+
+    .share-card-btn:active {
+        transform: scale(0.9);
+    }
+
+    #share-toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius-md);
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(var(--accent-brand-rgb), 0.05);
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    #share-toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+    </style>
+</head>
+<body>
+    <!-- 
+      Google Blogger Skin Layout Sections (REQUIRED FOR VALIDATION)
+      Do not add actual Blogger gadgets here, we handle posts dynamically.
+    -->
+    <div style='display:none;'>
+        <b:section id='header-layout' showaddelement='false'/>
+        <b:section id='main-layout' showaddelement='false'/>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div id="scroll-progress-bar"></div>
+
+    <!-- Ticker / Announcement Bar -->
+    <div class="announcement-ticker-wrap">
+        <div class="ticker-container">
+            <span class="ticker-label"><i class="fa-solid fa-fire"></i> Trending Now</span>
+            <div class="ticker-scroll-track">
+                <div class="ticker-content">
+                    <span class="ticker-item">#ArtificialIntelligence changing daily lives</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#SideHustles to start in 2026 with $0</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#Mindfulness habits for stress relief</span>
+                    <span class="ticker-divider"></span>
+                    <span class="ticker-item">#PersonalFinance &amp; budgeting made simple</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Main Navigation -->
+    <header class="main-header">
+        <div class="header-inner container">
+            <a href="#" class="brand-logo" id="header-logo">
+                <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                <span class="pulse-dot"></span>
+            </a>
+
+            <nav class="main-nav" id="desktop-nav" aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active" data-category="all">Home</a></li>
+                    <li><a href="#" class="nav-link" data-category="tech">Tech</a></li>
+                    <li><a href="#" class="nav-link" data-category="finance">Finance</a></li>
+                    <li><a href="#" class="nav-link" data-category="lifestyle">Lifestyle</a></li>
+                    <li><a href="#" class="nav-link" data-category="mindset">Mindset</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="theme-toggle" id="theme-mode-btn" aria-label="Toggle Dark Mode">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb">
+                            <i class="fa-solid fa-sun icon-sun"></i>
+                            <i class="fa-solid fa-moon icon-moon"></i>
+                        </span>
+                    </span>
+                </button>
+
+                <button class="mobile-menu-toggle" id="menu-toggle-btn" aria-label="Open Mobile Menu">
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-nav-drawer">
+        <div class="drawer-header">
+            <a href="#" class="brand-logo">
+                <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                <span class="pulse-dot"></span>
+            </a>
+            <button class="close-drawer" id="close-drawer-btn" aria-label="Close Mobile Menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile Navigation">
+            <ul class="mobile-nav-links">
+                <li><a href="#" class="mobile-nav-link active" data-category="all">Home</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="tech">Tech</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="finance">Finance</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="lifestyle">Lifestyle</a></li>
+                <li><a href="#" class="mobile-nav-link" data-category="mindset">Mindset</a></li>
+            </ul>
+        </nav>
+        <div class="drawer-footer">
+            <p class="drawer-motto">Insights that shape the future.</p>
+        </div>
+    </div>
+    <div class="drawer-backdrop" id="drawer-backdrop-overlay"></div>
+
+    <!-- Main Layout Wrapper -->
+    <main class="main-content-layout container">
+        
+        <!-- MONETIZATION: Premium Leaderboard Ad Placement -->
+        <div class="ad-container ad-leaderboard-wrap" id="ad-leaderboard-top">
+            <div class="ad-label">Sponsored Advertisement</div>
+            <div class="ad-placeholder-graphic">
+                <div class="ad-glow"></div>
+                <div class="ad-info-text">
+                    <span class="ad-dimensions">970 × 90 px Leaderboard Ad</span>
+                    <span class="ad-subtext">Premium High-CPM programmatic placement</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Hero Editorial Grid -->
+        <section class="hero-editorial-section" id="hero-section">
+            <div class="hero-grid">
+                <!-- Large Featured Article (Left/Main) -->
+                <article class="featured-card featured-main" id="main-featured-article">
+                    <div class="card-bg-wrap">
+                        <div class="card-bg-image" id="featured-hero-bg"></div>
+                        <div class="card-gradient-overlay"></div>
+                    </div>
+                    <div class="featured-content">
+                        <span class="badge badge-accent" id="featured-hero-tag">Tech</span>
+                        <div class="meta-row">
+                            <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="featured-hero-readtime">5 min read</span></span>
+                            <span class="meta-item"><i class="fa-regular fa-calendar"></i> <span id="featured-hero-date">May 20, 2026</span></span>
+                        </div>
+                        <h1 class="featured-title" id="featured-hero-title">How Artificial Intelligence is Changing Everyday Life</h1>
+                        <p class="featured-excerpt" id="featured-hero-excerpt">Artificial intelligence (AI) is increasingly being integrated into our homes, making our lives more convenient, highly productive, and uniquely personalized...</p>
+                        <a href="#feed-anchor" class="btn btn-primary" id="featured-hero-btn">Read full story <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Small Features Side List (Right Column) -->
+                <div class="hero-sub-column">
+                    <!-- Secondary Post 1 -->
+                    <article class="sub-featured-card" id="sub-post-1">
+                        <div class="sub-card-bg-wrap">
+                            <div class="sub-card-bg-image" id="sub-bg-1"></div>
+                            <div class="sub-card-overlay"></div>
+                        </div>
+                        <div class="sub-card-content">
+                            <span class="badge badge-secondary" id="sub-tag-1">Finance</span>
+                            <h2 class="sub-card-title" id="sub-title-1">Saving Money on a Tight Budget: Proven Tactics</h2>
+                            <div class="meta-row">
+                                <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="sub-read-1">4 min read</span></span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Secondary Post 2 -->
+                    <article class="sub-featured-card" id="sub-post-2">
+                        <div class="sub-card-bg-wrap">
+                            <div class="sub-card-bg-image" id="sub-bg-2"></div>
+                            <div class="sub-card-overlay"></div>
+                        </div>
+                        <div class="sub-card-content">
+                            <span class="badge badge-secondary" id="sub-tag-2">Mindset</span>
+                            <h2 class="sub-card-title" id="sub-title-2">Cultivating Calm: Daily Mindfulness Habits</h2>
+                            <div class="meta-row">
+                                <span class="meta-item"><i class="fa-regular fa-clock"></i> <span id="sub-read-2">3 min read</span></span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Search, Category Quick-Filters and Dynamic News Feed Grid -->
+        <span id="feed-anchor" class="anchor-offset"></span>
+        <section class="news-feed-section">
+            
+            <!-- Sticky Search and Filter Header Bar -->
+            <div class="feed-control-bar" id="filter-bar">
+                <div class="feed-control-inner">
+                    <!-- Category Pills -->
+                    <div class="category-pills-wrap">
+                        <button class="pill active" data-filter="all">All Stories</button>
+                        <button class="pill" data-filter="tech">Tech</button>
+                        <button class="pill" data-filter="finance">Finance</button>
+                        <button class="pill" data-filter="lifestyle">Lifestyle</button>
+                        <button class="pill" data-filter="mindset">Mindset</button>
+                    </div>
+
+                    <!-- Search Input Box -->
+                    <div class="search-box-wrap">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="feed-search-input" placeholder="Search daily insights..." aria-label="Search articles" />
+                        <button id="clear-search-btn" class="clear-search" aria-label="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Feed and Sidebar Layout Grid -->
+            <div class="layout-grid-columns">
+                <!-- Column 1: News Feed Column -->
+                <div class="main-news-feed">
+                    
+                    <!-- Search Results Header (hidden by default) -->
+                    <div class="search-result-status" id="search-result-banner" style="display: none;">
+                        <span class="status-text">Showing matches for: "<strong id="search-query-highlight"></strong>"</span>
+                        <button class="reset-filter-btn" id="reset-search-btn">Reset</button>
+                    </div>
+
+                    <!-- Active Grid for Post Cards -->
+                    <div class="posts-cards-grid" id="news-posts-container">
+                        <!-- Dynamic Post Cards Injected via JS -->
+                    </div>
+
+                    <!-- Empty State for Search -->
+                    <div class="feed-empty-state" id="empty-state-notice" style="display: none;">
+                        <div class="empty-icon"><i class="fa-regular fa-folder-open"></i></div>
+                        <h3>No Articles Found</h3>
+                        <p>We couldn't find any articles matching your search query. Try broadening your keywords.</p>
+                        <button class="btn btn-secondary" id="clear-all-filters-btn">Browse All Stories</button>
+                    </div>
+
+                    <!-- MONETIZATION: Mid-Feed Dynamic Banner Placement -->
+                    <div class="ad-container ad-in-feed-wrap" id="ad-mid-feed">
+                        <div class="ad-label">Sponsored Advertisement</div>
+                        <div class="ad-placeholder-graphic">
+                            <div class="ad-glow"></div>
+                            <div class="ad-info-text">
+                                <span class="ad-dimensions">728 × 90 px Mid-Feed Banner Ad</span>
+                                <span class="ad-subtext">Highly engaging contextual advertising banner</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Column 2: Interactive Sidebar Column -->
+                <aside class="sidebar-aside" id="main-sidebar">
+
+                    <!-- MONETIZATION and CONVERSION: High-Converting Newsletter Widget -->
+                    <div class="sidebar-widget newsletter-widget" id="sidebar-newsletter-card">
+                        <div class="widget-decor-bg"></div>
+                        <div class="widget-content">
+                            <span class="widget-meta">JOIN THE PULSE</span>
+                            <h3 class="widget-title">Insights That Shape The Future</h3>
+                            <p class="widget-desc">Join over 50,000+ forward-thinking professionals who receive our curated daily digest directly in their inbox.</p>
+                            
+                            <!-- Conversion Capture Form -->
+                            <form id="newsletter-form-sidebar" class="widget-form">
+                                <div class="input-glow-group">
+                                    <input type="email" id="newsletter-email-sidebar" class="glow-input" placeholder="Your primary email address" required="" aria-label="Email address" />
+                                    <span class="focus-border-glow"></span>
+                                </div>
+                                <button type="submit" class="btn btn-submit-glow" id="newsletter-submit-btn">
+                                    <span class="btn-text">Subscribe to Pulse <i class="fa-solid fa-paper-plane"></i></span>
+                                    <span class="btn-spinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                                </button>
+                            </form>
+                            
+                            <!-- Success State -->
+                            <div class="widget-success-state" id="newsletter-success-box" style="display: none;">
+                                <div class="success-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
+                                <h4>Welcome to The Daily Pulse!</h4>
+                                <p>You're in. We've sent a quick welcome briefing to your email address.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending Widget (Editorial Rank List) -->
+                    <div class="sidebar-widget trending-list-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-heading-title"><i class="fa-solid fa-arrow-trend-up"></i> Trending Now</h3>
+                        </div>
+                        <div class="trending-rank-list" id="trending-posts-sidebar-list">
+                            <!-- Dynamic Rank Items Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- MONETIZATION: Sticky Skyscraper Ad Placeholder -->
+                    <div class="ad-container ad-skyscraper-wrap" id="ad-skyscraper-sidebar">
+                        <div class="ad-label">Sponsored Advertisement</div>
+                        <div class="ad-placeholder-graphic">
+                            <div class="ad-glow"></div>
+                            <div class="ad-info-text">
+                                <span class="ad-dimensions">300 × 600 px Half-Page / Skyscraper Ad</span>
+                                <span class="ad-subtext">Premium high-impact visual banner</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="main-footer">
+        <div class="footer-inner container">
+            <div class="footer-col footer-col-brand">
+                <a href="#" class="brand-logo">
+                    <span class="logo-text">The Daily <span class="logo-highlight">Pulse</span></span>
+                    <span class="pulse-dot"></span>
+                </a>
+                <p class="footer-about">An ultra-premium news portal engineered for dynamic insights, productivity advice, financial clarity, and cutting-edge tech advancements.</p>
+                <div class="footer-socials">
+                    <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-title">Channels</h4>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link-item" data-category="tech">Technology</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="finance">Personal Finance</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="lifestyle">Modern Lifestyle</a></li>
+                    <li><a href="#" class="footer-link-item" data-category="mindset">Mindset &amp; Habits</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-title">The Portal</h4>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link-item">About The Pulse</a></li>
+                    <li><a href="#" class="footer-link-item">Editorial Standards</a></li>
+                    <li><a href="#" class="footer-link-item">Sponsorship Kits</a></li>
+                    <li><a href="#" class="footer-link-item">Privacy &amp; Terms</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col footer-col-newsletter">
+                <h4 class="footer-title">Fast Delivery</h4>
+                <p class="footer-news-desc">Get raw briefings sent twice daily directly from our editorial desk.</p>
+                <form id="newsletter-form-footer" class="footer-form">
+                    <div class="footer-input-wrap">
+                        <input type="email" id="newsletter-email-footer" placeholder="Enter email address" required="" aria-label="Email address for footer newsletter" />
+                        <button type="submit" class="btn-footer-submit" aria-label="Submit Newsletter Form"><i class="fa-solid fa-arrow-right-long"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p class="copyright-text">&#169; 2026 The Daily Pulse. Engineered with premium design aesthetics. All rights reserved.</p>
+                <p class="branding-credits">Powered by Autopilot blogging engine &amp; Gemini 3.5 High.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive script block wrapped inside CDATA to secure Blogger XML validation -->
+    <script type='text/javascript'>
+    //<![CDATA[
+    /**
+     * THE DAILY PULSE — EDITORIAL LOGIC and INTERACTION ENGINE
+     */
+    const BLOGGER_CONFIG = {
+        useLiveBloggerFeed: true, 
+        blogId: "1496630585809549653", 
+        // Automatically fetch from the current Blogger URL where this theme is active!
+        blogUrl: window.location.origin 
+    };
+
+    const POSTS_DATABASE = [
+        {
+            id: "ai-everyday-life",
+            title: "How Artificial Intelligence is Changing Everyday Life",
+            slug: "how-artificial-intelligence-is-changing-everyday-life",
+            date: "May 20, 2026",
+            category: "tech",
+            readTime: "5 min read",
+            description: "Artificial intelligence (AI) is increasingly being integrated into our homes, making our lives more convenient, highly productive, and uniquely personalized.",
+            image: "https://image.pollinations.ai/prompt/how%20artificial%20intelligence%20is%20changing%20everyday%20life?width=800&height=450&nologo=true",
+            author: "Alex Rivers",
+            trending: true,
+            featured: true,
+            postUrl: ""
+        },
+        {
+            id: "saving-money-budget",
+            title: "Saving Money on a Tight Budget: Proven Tactics",
+            slug: "saving-money-on-a-tight-budget-practical-tips",
+            date: "May 15, 2026",
+            category: "finance",
+            readTime: "4 min read",
+            description: "Living on a tight budget can be stressful, but it doesn't have to be impossible. With a little creativity and rigorous financial tracking.",
+            image: "https://images.unsplash.com/photo-1635840420670-5470266ffa39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+            author: "Sarah Chen",
+            trending: true,
+            featured: false,
+            postUrl: ""
+        },
+        {
+            id: "mindfulness-stress",
+            title: "Cultivating Calm: Daily Mindfulness Habits for Stress",
+            slug: "cultivating-calm-mindfulness-habits-for-reducing-stress",
+            date: "May 24, 2026",
+            category: "mindset",
+            readTime: "3 min read",
+            description: "Reduce cortisol levels and regain mental clarity. Simple, scientifically-grounded habits to integrate mindfulness into your routines.",
+            image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+            author: "Dr. Elena Moss",
+            trending: true,
+            featured: false,
+            postUrl: ""
+        }
+    ];
+
+    const AppState = {
+        currentCategory: "all",
+        searchQuery: "",
+        theme: "light"
+    };
+
+    const bodyEl = document.body;
+    const themeBtn = document.getElementById("theme-mode-btn");
+    const scrollBar = document.getElementById("scroll-progress-bar");
+    const postsContainer = document.getElementById("news-posts-container");
+    const trendingContainer = document.getElementById("trending-posts-sidebar-list");
+    const searchInput = document.getElementById("feed-search-input");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const searchResultBanner = document.getElementById("search-result-banner");
+    const searchQueryHighlight = document.getElementById("search-query-highlight");
+    const emptyStateNotice = document.getElementById("empty-state-notice");
+    const resetSearchBtn = document.getElementById("reset-search-btn");
+    const clearAllFiltersBtn = document.getElementById("clear-all-filters-btn");
+    const filterPills = document.querySelectorAll(".pill");
+
+    const menuToggleBtn = document.getElementById("menu-toggle-btn");
+    const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
+    const drawerBackdropOverlay = document.getElementById("drawer-backdrop-overlay");
+    const closeDrawerBtn = document.getElementById("close-drawer-btn");
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+    const footerCategoryLinks = document.querySelectorAll(".footer-link-item");
+
+    const newsletterFormSidebar = document.getElementById("newsletter-form-sidebar");
+    const emailInputSidebar = document.getElementById("newsletter-email-sidebar");
+    const newsletterSuccessBox = document.getElementById("newsletter-success-box");
+    const newsletterSubmitBtn = document.getElementById("newsletter-submit-btn");
+    const newsletterFormFooter = document.getElementById("newsletter-form-footer");
+    const emailInputFooter = document.getElementById("newsletter-email-footer");
+
+    async function fetchBloggerFeed() {
+        if (!BLOGGER_CONFIG.useLiveBloggerFeed) return;
+
+        let feedUrl = "";
+        if (BLOGGER_CONFIG.blogId && BLOGGER_CONFIG.blogId !== "YOUR_BLOGGER_BLOG_ID_HERE") {
+            feedUrl = `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json&max-results=30`;
+        } else if (BLOGGER_CONFIG.blogUrl) {
+            const cleanUrl = BLOGGER_CONFIG.blogUrl.replace(/\/$/, "");
+            feedUrl = `${cleanUrl}/feeds/posts/default?alt=json&max-results=30`;
+        } else {
+            return;
+        }
+
+        try {
+            const response = await fetch(feedUrl);
+            if (!response.ok) throw new Error("HTTP error");
+            
+            const data = await response.json();
+            const entries = data.feed.entry || [];
+            
+            if (entries.length === 0) return;
+
+            const mappedPosts = entries.map((entry, idx) => {
+                const title = entry.title ? entry.title.$t : "Untitled Article";
+                const content = entry.content ? entry.content.$t : "";
+                
+                const imgRegex = /<img[^>]+src="([^">]+)"/;
+                const imgMatch = content.match(imgRegex);
+                const firstImg = imgMatch ? imgMatch[1] : "";
+                
+                const rawPubDate = entry.published ? entry.published.$t : "";
+                let friendlyDate = "Recently";
+                if (rawPubDate) {
+                    const dateObj = new Date(rawPubDate);
+                    friendlyDate = dateObj.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric"
+                    });
+                }
+                
+                let category = "lifestyle";
+                if (entry.category && entry.category.length > 0) {
+                    const rawTag = entry.category[0].term.toLowerCase();
+                    if (["tech", "technology", "artificialintelligence"].includes(rawTag)) category = "tech";
+                    else if (["finance", "money", "investing", "budgeting"].includes(rawTag)) category = "finance";
+                    else if (["lifestyle", "health", "diet"].includes(rawTag)) category = "lifestyle";
+                    else if (["mindset", "productivity", "focus", "habits"].includes(rawTag)) category = "mindset";
+                    else category = rawTag;
+                }
+                
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = content;
+                const cleanText = tempDiv.textContent || tempDiv.innerText || "";
+                const excerpt = cleanText.trim().substring(0, 180).replace(/\s+/g, " ") + "...";
+                
+                const wordsCount = cleanText.split(/\s+/).length;
+                const readingMinutes = Math.max(1, Math.round(wordsCount / 200));
+                
+                const slug = title.toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/(^-|-$)+/g, "")
+                    .substring(0, 50);
+
+                const altLink = entry.link ? entry.link.find(l => l.rel === "alternate") : null;
+                const postUrl = altLink ? altLink.href : "#";
+
+                return {
+                    id: `blogger-post-${idx}`,
+                    title: title,
+                    slug: slug,
+                    date: friendlyDate,
+                    category: category,
+                    readTime: `${readingMinutes} min read`,
+                    description: excerpt,
+                    image: firstImg || `https://image.pollinations.ai/prompt/${encodeURIComponent(title)}?width=800&height=450&nologo=true`,
+                    author: entry.author && entry.author[0] ? entry.author[0].name.$t : "Editorial Staff",
+                    trending: idx < 5,
+                    featured: idx === 0,
+                    postUrl: postUrl
+                };
+            });
+
+            POSTS_DATABASE.length = 0;
+            POSTS_DATABASE.push(...mappedPosts);
+            
+        } catch (err) {
+            console.error("Failed dynamic Blogger load:", err);
+        }
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem("pulse-theme");
+        const userPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (savedTheme === "dark" || (!savedTheme && userPrefersDark)) {
+            bodyEl.classList.add("dark-theme");
+            AppState.theme = "dark";
+        } else {
+            bodyEl.classList.remove("dark-theme");
+            AppState.theme = "light";
+        }
+    }
+
+    function toggleTheme() {
+        if (bodyEl.classList.contains("dark-theme")) {
+            bodyEl.classList.remove("dark-theme");
+            localStorage.setItem("pulse-theme", "light");
+            AppState.theme = "light";
+        } else {
+            bodyEl.classList.add("dark-theme");
+            localStorage.setItem("pulse-theme", "dark");
+            AppState.theme = "dark";
+        }
+    }
+
+    function trackScrollProgress() {
+        const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+        scrollBar.style.width = scrolled + "%";
+    }
+
+    function showSkeletonLoader() {
+        postsContainer.innerHTML = Array(4).fill(0).map(() => `
+            <div class="skeleton-card">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-text skeleton-title"></div>
+                <div class="skeleton-text" style="width: 40%"></div>
+                <div class="skeleton-text skeleton-desc"></div>
+                <div class="skeleton-text" style="width: 90%; margin-top: auto;"></div>
+            </div>
+        `).join("");
+    }
+
+    function renderHeroBlock() {
+        const featuredPost = POSTS_DATABASE.find(post => post.featured) || POSTS_DATABASE[0];
+        const subPosts = POSTS_DATABASE.filter(post => !post.featured).slice(0, 2);
+
+        if (featuredPost) {
+            const bgEl = document.getElementById("featured-hero-bg");
+            const tagEl = document.getElementById("featured-hero-tag");
+            const readEl = document.getElementById("featured-hero-readtime");
+            const dateEl = document.getElementById("featured-hero-date");
+            const titleEl = document.getElementById("featured-hero-title");
+            const excerptEl = document.getElementById("featured-hero-excerpt");
+            const btnEl = document.getElementById("featured-hero-btn");
+
+            if (bgEl) bgEl.style.backgroundImage = `url('${featuredPost.image}')`;
+            if (tagEl) {
+                tagEl.innerText = featuredPost.category;
+                tagEl.className = `badge badge-${featuredPost.category}`;
+            }
+            if (readEl) readEl.innerText = featuredPost.readTime;
+            if (dateEl) dateEl.innerText = featuredPost.date;
+            if (titleEl) titleEl.innerText = featuredPost.title;
+            if (excerptEl) excerptEl.innerText = featuredPost.description;
+            if (btnEl) {
+                btnEl.href = featuredPost.postUrl || "#feed-anchor";
+                if (featuredPost.postUrl) btnEl.target = "_blank";
+            }
+        }
+
+        subPosts.forEach((post, index) => {
+            const idx = index + 1;
+            const bgEl = document.getElementById(`sub-bg-${idx}`);
+            const tagEl = document.getElementById(`sub-tag-${idx}`);
+            const titleEl = document.getElementById(`sub-title-${idx}`);
+            const readEl = document.getElementById(`sub-read-${idx}`);
+            const cardEl = document.getElementById(`sub-post-${idx}`);
+
+            if (bgEl) bgEl.style.backgroundImage = `url('${post.image}')`;
+            if (tagEl) tagEl.innerText = post.category;
+            if (titleEl) titleEl.innerText = post.title;
+            if (readEl) readEl.innerText = post.readTime;
+            if (cardEl && post.postUrl) {
+                cardEl.onclick = () => window.open(post.postUrl, "_blank");
+            }
+        });
+    }
+
+    function renderNewsFeed() {
+        const filteredPosts = POSTS_DATABASE.filter(post => {
+            if (post.featured && AppState.currentCategory === "all" && !AppState.searchQuery) return false;
+            const matchesCategory = AppState.currentCategory === "all" || post.category === AppState.currentCategory;
+            const matchesSearch = !AppState.searchQuery || 
+                post.title.toLowerCase().includes(AppState.searchQuery.toLowerCase()) ||
+                post.description.toLowerCase().includes(AppState.searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+
+        if (filteredPosts.length === 0) {
+            postsContainer.style.display = "none";
+            emptyStateNotice.style.display = "block";
+            return;
+        } else {
+            postsContainer.style.display = "grid";
+            emptyStateNotice.style.display = "none";
+        }
+
+        postsContainer.innerHTML = filteredPosts.map(post => {
+            const titleText = highlightTerm(post.title, AppState.searchQuery);
+            const descText = highlightTerm(post.description, AppState.searchQuery);
+            return `
+                <article class="post-card">
+                    <div class="card-img-wrap" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');" style="cursor: pointer;">
+                        <span class="card-badge badge-${post.category}">${post.category}</span>
+                        <img class="card-img" src="${post.image}" alt="${post.title}" loading="lazy"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="card-author">${post.author}</span>
+                            <span class="card-meta-dot"></span>
+                            <span class="card-date">${post.date}</span>
+                        </div>
+                        <h3 class="card-headline" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');" style="cursor: pointer;">${titleText}</h3>
+                        <p class="card-description">${descText}</p>
+                        <div class="card-footer">
+                            <span class="meta-item"><i class="fa-regular fa-clock"></i> ${post.readTime}</span>
+                            <div class="card-footer-actions" style="display:flex; align-items:center; gap:16px;">
+                                <button class="share-card-btn" onclick="copyShareLink('${post.postUrl || window.location.href}', event)" style="color:var(--text-secondary); font-size:14px; transition:color 0.2s ease, transform 0.2s ease; cursor:pointer;" title="Copy share link"><i class="fa-regular fa-share-from-square"></i></button>
+                                <a href="${post.postUrl || '#feed-anchor'}" ${post.postUrl ? 'target="_blank"' : ''} class="read-more-link">Read briefing <i class="fa-solid fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join("");
+    }
+
+    function renderTrendingList() {
+        const trendingPosts = POSTS_DATABASE.filter(post => post.trending).slice(0, 5);
+        trendingContainer.innerHTML = trendingPosts.map((post, idx) => `
+            <div class="trending-rank-item" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');">
+                <span class="rank-number">0${idx + 1}</span>
+                <div class="rank-text-wrap">
+                    <span class="rank-meta">${post.category} &middot; ${post.readTime}</span>
+                    <h4 class="rank-title">${post.title}</h4>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function openDrawer() {
+        mobileNavDrawer.classList.add("open");
+        drawerBackdropOverlay.classList.add("open");
+        bodyEl.style.overflow = "hidden";
+    }
+
+    function closeDrawer() {
+        mobileNavDrawer.classList.remove("open");
+        drawerBackdropOverlay.classList.remove("open");
+        bodyEl.style.overflow = "";
+    }
+
+    function applyFilter(category) {
+        AppState.currentCategory = category;
+        filterPills.forEach(pill => {
+            if (pill.dataset.filter === category) pill.classList.add("active");
+            else pill.classList.remove("active");
+        });
+        mobileNavLinks.forEach(link => {
+            if (link.dataset.category === category) link.classList.add("active");
+            else link.classList.remove("active");
+        });
+        showSkeletonLoader();
+        setTimeout(() => {
+            renderNewsFeed();
+        }, 280);
+    }
+
+    function handleSearch(val) {
+        AppState.searchQuery = val.trim();
+        if (AppState.searchQuery) {
+            clearSearchBtn.style.display = "block";
+            searchResultBanner.style.display = "flex";
+            searchQueryHighlight.innerText = AppState.searchQuery;
+        } else {
+            clearSearchBtn.style.display = "none";
+            searchResultBanner.style.display = "none";
+        }
+        renderNewsFeed();
+    }
+
+    function clearSearch() {
+        searchInput.value = "";
+        AppState.searchQuery = "";
+        clearSearchBtn.style.display = "none";
+        searchResultBanner.style.display = "none";
+        renderNewsFeed();
+    }
+
+    function triggerFormSuccess(form, emailInput, successBox, submitBtn) {
+        const btnText = submitBtn.querySelector(".btn-text");
+        const btnSpinner = submitBtn.querySelector(".btn-spinner");
+        if (btnText && btnSpinner) {
+            btnText.style.display = "none";
+            btnSpinner.style.display = "inline-block";
+        }
+        submitBtn.disabled = true;
+        setTimeout(() => {
+            form.style.display = "none";
+            successBox.style.display = "block";
+            localStorage.setItem("pulse-subscriber", emailInput.value);
+        }, 1200);
+    }
+
+    function checkSubscribedState() {
+        const isSubscribed = localStorage.getItem("pulse-subscriber");
+        if (isSubscribed) {
+            const newsletterContainer = document.getElementById("sidebar-newsletter-card");
+            if (newsletterContainer) {
+                newsletterContainer.innerHTML = `
+                    <div class="widget-content">
+                        <span class="widget-meta">WELCOME BACK</span>
+                        <h3 class="widget-title">You're Inside The Pulse</h3>
+                        <p class="widget-desc">You are currently receiving daily digest briefings to <strong>${isSubscribed}</strong>.</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        initTheme();
+        showSkeletonLoader();
+        await fetchBloggerFeed();
+        renderHeroBlock();
+        renderTrendingList();
+        applyFilter("all");
+        checkSubscribedState();
+        
+        themeBtn.addEventListener("click", toggleTheme);
+        window.addEventListener("scroll", trackScrollProgress);
+        searchInput.addEventListener("input", (e) => handleSearch(e.target.value));
+        clearSearchBtn.addEventListener("click", clearSearch);
+        resetSearchBtn.addEventListener("click", clearSearch);
+        clearAllFiltersBtn.addEventListener("click", () => {
+            clearSearch();
+            applyFilter("all");
+        });
+        
+        filterPills.forEach(pill => {
+            pill.addEventListener("click", () => {
+                const cat = pill.dataset.filter;
+                applyFilter(cat);
+                const feedPos = document.getElementById("feed-anchor").offsetTop;
+                if (window.scrollY < feedPos - 120) {
+                    window.scrollTo({ top: feedPos - 90, behavior: "smooth" });
+                }
+            });
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const cat = link.dataset.category;
+                applyFilter(cat);
+                closeDrawer();
+                const feedPos = document.getElementById("feed-anchor").offsetTop;
+                window.scrollTo({ top: feedPos - 90, behavior: "smooth" });
+            });
+        });
+
+        footerCategoryLinks.forEach(link => {
+            link.addEventListener("click", (e) => {
+                const cat = link.dataset.category;
+                if (cat) {
+                    e.preventDefault();
+                    applyFilter(cat);
+                    const feedPos = document.getElementById("feed-anchor").offsetTop;
+                    window.scrollTo({ top: feedPos - 90, behavior: "smooth" });
+                }
+            });
+        });
+
+        menuToggleBtn.addEventListener("click", openDrawer);
+        closeDrawerBtn.addEventListener("click", closeDrawer);
+        drawerBackdropOverlay.addEventListener("click", closeDrawer);
+        
+        newsletterFormSidebar.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const emailVal = emailInputSidebar.value;
+            if (validateEmail(emailVal)) {
+                triggerFormSuccess(newsletterFormSidebar, emailInputSidebar, newsletterSuccessBox, newsletterSubmitBtn);
+            } else {
+                alert("Please supply a genuine email address.");
+            }
+        });
+
+        newsletterFormFooter.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const emailVal = emailInputFooter.value;
+            if (validateEmail(emailVal)) {
+                const btnSubmitFooter = newsletterFormFooter.querySelector(".btn-footer-submit");
+                btnSubmitFooter.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+                btnSubmitFooter.disabled = true;
+                setTimeout(() => {
+                    newsletterFormFooter.innerHTML = '<p style="font-size: 13px; color: #10B981; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Subscribed successfully!</p>';
+                    localStorage.setItem("pulse-subscriber", emailVal);
+                }, 1000);
+            } else {
+                alert("Please supply a genuine email address.");
+            }
+        });
+    });
+
+    window.copyShareLink = function(url, event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        navigator.clipboard.writeText(url).then(() => {
+            const toast = document.getElementById("share-toast");
+            if (toast) {
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2500);
+            }
+        }).catch(err => {
+            console.error("Clipboard copy failed: ", err);
+        });
+    };
+    //]]>
+    </script>
+
+    <!-- V3 Premium Elastic Share Toast Alert -->
+    <div id="share-toast">
+        <i class="fa-solid fa-circle-check" style="color:#10B981; font-size:16px;"></i>
+        <span>Briefing link copied to clipboard!</span>
+    </div>
+</body>
+</html>
