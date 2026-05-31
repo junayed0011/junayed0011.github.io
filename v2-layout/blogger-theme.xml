@@ -448,8 +448,9 @@ button {
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    width: 24px;
-    height: 16px;
+    width: 44px;
+    height: 44px;
+    padding: 14px 10px; /* Standard 44px touch target boundary for perfect mobile ergonomics */
 }
 
 .burger-bar {
@@ -490,6 +491,17 @@ button {
 .close-drawer {
     font-size: 24px;
     color: var(--text-primary);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.close-drawer:hover {
+    background-color: var(--input-bg);
 }
 
 .mobile-nav-links {
@@ -979,6 +991,7 @@ button {
 
 .pill {
     white-space: nowrap;
+    flex-shrink: 0; /* Prevents category pills from squeezing/compressing in flex layout */
     padding: 8px 18px;
     font-size: 13px;
     font-weight: 600;
@@ -1861,6 +1874,26 @@ button {
 @media (max-width: 480px) {
     .container {
         padding: 0 16px;
+    }
+
+    /* Small phone typography and container optimizations */
+    .featured-content {
+        padding: 20px 16px;
+    }
+
+    .featured-title {
+        font-size: 22px !important;
+        line-height: 1.3;
+    }
+
+    .featured-excerpt {
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 13px;
     }
 
     .footer-inner {
