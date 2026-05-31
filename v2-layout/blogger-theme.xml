@@ -2492,14 +2492,24 @@ mark.search-highlight {
     <!-- Main Layout Wrapper Container -->
     <div class='container main-wrapper'>
         <div class='ad-container ad-leaderboard-wrap' id='ad-leaderboard-top'>
-            <div class='ad-label'>Sponsored Advertisement</div>
-            <div class='ad-placeholder-graphic'>
-                <div class='ad-glow'></div>
-                <div class='ad-info-text'>
-                    <span class='ad-dimensions'>970 x 90 px Leaderboard Ad</span>
-                    <span class='ad-subtext'>Premium Programmatic Header Placement</span>
-                </div>
-            </div>
+            <b:section id='header-ad-section' maxwidgets='1' showaddelement='yes'>
+                <b:widget id='HTML106' locked='false' title='Header Leaderboard Ad (970x90 or 728x90)' type='HTML'>
+                    <b:includable id='main'>
+                        <b:if cond='data:content'>
+                            <data:content/>
+                        <b:else/>
+                            <div class='ad-label'>Sponsored Advertisement</div>
+                            <div class='ad-placeholder-graphic'>
+                                <div class='ad-glow'></div>
+                                <div class='ad-info-text'>
+                                    <span class='ad-dimensions'>970 x 90 px Leaderboard Ad</span>
+                                    <span class='ad-subtext'>Premium Programmatic Header Placement</span>
+                                </div>
+                            </div>
+                        </b:if>
+                    </b:includable>
+                </b:widget>
+            </b:section>
         </div>
 
         <div class='layout-grid-columns'>
