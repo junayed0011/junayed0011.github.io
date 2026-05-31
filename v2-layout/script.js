@@ -405,8 +405,15 @@ function renderHeroBlock() {
         if (titleEl) titleEl.innerText = featuredPost.title;
         if (excerptEl) excerptEl.innerText = featuredPost.description;
         if (btnEl) {
-            btnEl.href = featuredPost.postUrl || "#feed-anchor";
-            if (featuredPost.postUrl) btnEl.target = "_blank";
+            if (featuredPost.postUrl) {
+                btnEl.href = featuredPost.postUrl;
+                btnEl.target = "_blank";
+                btnEl.onclick = null;
+            } else {
+                btnEl.href = "javascript:void(0)";
+                btnEl.target = "";
+                btnEl.onclick = (e) => { e.preventDefault(); openReadingModal(featuredPost.id); };
+            }
         }
     }
 
@@ -423,8 +430,12 @@ function renderHeroBlock() {
         if (tagEl) tagEl.innerText = post.category;
         if (titleEl) titleEl.innerText = post.title;
         if (readEl) readEl.innerText = post.readTime;
-        if (cardEl && post.postUrl) {
-            cardEl.onclick = () => window.open(post.postUrl, "_blank");
+        if (cardEl) {
+            if (post.postUrl) {
+                cardEl.onclick = () => window.open(post.postUrl, "_blank");
+            } else {
+                cardEl.onclick = () => openReadingModal(post.id);
+            }
         }
     });
 }
@@ -458,8 +469,8 @@ function renderNewsFeed() {
         const descText = highlightTerm(post.description, AppState.searchQuery);
         
         return `
-            <article class="post-card">
-                <div class="card-img-wrap" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');" style="cursor: pointer;">
+            <article class="post-card" onclick="if(!'${post.postUrl || ''}') { openReadingModal('${post.id}', event); }">
+                <div class="card-img-wrap" onclick="if('${post.postUrl || ''}') { window.open('${post.postUrl}', '_blank'); } else { openReadingModal('${post.id}', event); }" style="cursor: pointer;">
                     <span class="card-badge badge-${post.category}">${post.category}</span>
                     <img class="card-img" src="${post.image}" alt="${post.title}" loading="lazy">
                 </div>
@@ -469,13 +480,13 @@ function renderNewsFeed() {
                         <span class="card-meta-dot"></span>
                         <span class="card-date">${post.date}</span>
                     </div>
-                    <h3 class="card-headline" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');" style="cursor: pointer;">${titleText}</h3>
+                    <h3 class="card-headline" onclick="if('${post.postUrl || ''}') { window.open('${post.postUrl}', '_blank'); } else { openReadingModal('${post.id}', event); }" style="cursor: pointer;">${titleText}</h3>
                     <p class="card-description">${descText}</p>
                     <div class="card-footer">
                         <span class="meta-item"><i class="fa-regular fa-clock"></i> ${post.readTime}</span>
                         <div class="card-footer-actions" style="display:flex; align-items:center; gap:16px;">
                             <button class="share-card-btn" onclick="copyShareLink('${post.postUrl || window.location.href}', event)" style="color:var(--text-secondary); font-size:14px; transition:color 0.2s ease, transform 0.2s ease; cursor:pointer;" title="Copy share link"><i class="fa-regular fa-share-from-square"></i></button>
-                            <a href="${post.postUrl || '#feed-anchor'}" ${post.postUrl ? 'target="_blank"' : ''} class="read-more-link">Read briefing <i class="fa-solid fa-chevron-right"></i></a>
+                            <a href="${post.postUrl || 'javascript:void(0)'}" ${post.postUrl ? 'target="_blank"' : `onclick="openReadingModal('${post.id}', event)"`} class="read-more-link">Read briefing <i class="fa-solid fa-chevron-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -489,7 +500,7 @@ function renderTrendingList() {
     const trendingPosts = POSTS_DATABASE.filter(post => post.trending).slice(0, 5);
     
     trendingContainer.innerHTML = trendingPosts.map((post, idx) => `
-        <div class="trending-rank-item" onclick="if('${post.postUrl || ''}') window.open('${post.postUrl}', '_blank');">
+        <div class="trending-rank-item" onclick="if('${post.postUrl || ''}') { window.open('${post.postUrl}', '_blank'); } else { openReadingModal('${post.id}'); }">
             <span class="rank-number">0${idx + 1}</span>
             <div class="rank-text-wrap">
                 <span class="rank-meta">${post.category} &middot; ${post.readTime}</span>
@@ -753,3 +764,75 @@ window.copyShareLink = function(url, event) {
         console.error("Clipboard copy failed: ", err);
     });
 };
+
+
+// ==========================================================================
+// 11. Offline Reading Modal Controller (Detail View)
+// ==========================================================================
+window.openReadingModal = function(postId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    
+    const post = POSTS_DATABASE.find(p => p.id === postId);
+    if (!post) return;
+    
+    const modal = document.getElementById("reading-modal");
+    const mBadge = document.getElementById("modal-badge");
+    const mReadtime = document.getElementById("modal-readtime");
+    const mDate = document.getElementById("modal-date");
+    const mTitle = document.getElementById("modal-title");
+    const mAuthor = document.getElementById("modal-author");
+    const mImage = document.getElementById("modal-image");
+    const mContent = document.getElementById("modal-content");
+    
+    if (!modal) return;
+    
+    // Set content
+    if (mBadge) {
+        mBadge.innerText = post.category;
+        mBadge.className = `reading-modal-badge badge-${post.category}`;
+    }
+    if (mReadtime) mReadtime.innerText = post.readTime;
+    if (mDate) mDate.innerText = post.date;
+    if (mTitle) mTitle.innerText = post.title;
+    if (mAuthor) mAuthor.innerText = post.author;
+    if (mImage) {
+        mImage.style.backgroundImage = `url('${post.image}')`;
+    }
+    
+    // Inject dynamic high-fidelity extended body if present, else fallback
+    let bodyContent = post.body;
+    if (!bodyContent) {
+        if (post.category === "tech") {
+            bodyContent = `<p>${post.description}</p><p>The rapid acceleration of tech architectures in 2026 has opened up incredible new vistas of software scaling and automated workflows. Modern cognitive platforms utilize advanced generative neural structures that are trained on millions of high-dimension data tokens, allowing machines to perform complex semantic transformations with extreme precision.</p><p>From an architectural standpoint, the integration of distributed APIs and lightweight micro-frontends guarantees high legibility, modular scalability, and swift query execution times. As we continue to automate repetitive development lifecycles, developers can pivot their core focuses toward designing advanced systems, optimizing database pipelines, and creating premium user experiences.</p>`;
+        } else if (post.category === "finance") {
+            bodyContent = `<p>${post.description}</p><p>Navigating modern financial systems requires clear risk analysis, disciplined budgeting structures, and compounding investment allocations. By allocating capital to broad-market exchange traded funds (ETFs) and low-cost index assets, dynamic investors can achieve substantial historical returns while shielding their wealth from high inflation indices.</p><p>Furthermore, automating savings pipelines and running strict personal audits prevents budget leaks and builds financial safety nets. As compound interest begins to exert its mathematical power over years, even modest monthly allocations can blossom into highly stable investment balances, securing long-term financial freedom.</p>`;
+        } else if (post.category === "mindset" || post.category === "productivity") {
+            bodyContent = `<p>${post.description}</p><p>A dynamic attention span is the ultimate currency in today's hyper-notified workspace. Restructuring daily cognitive routines, design environments, and screen interfaces can help you achieve deeper focus sessions. Scientific studies demonstrate that deep work is best accessed in sandboxed intervals with high physiological clarity.</p><p>Integrating single-tasking disciplines, cognitive scoping, and light physical exercise can radically reduce stress levels and clear mental pathways. By taking deliberate control of our attention envelopes, we can build high productivity systems that are sustainable, positive, and resilient over time.</p>`;
+        } else {
+            bodyContent = `<p>${post.description}</p><p>Living a highly conscious lifestyle is about aligning our daily practices with physical vitality and mental scoping. Establishing robust biological schedules, drinking structured fluids, and delaying our interaction with digital notifications are crucial factors in optimizing human performance indexes.</p><p>Curating healthy dietary balances, physical mobility exercises, and dedicated social connections further strengthens our foundational health networks. By adopting small, harmonized improvements every single day, we can build a modern lifestyle that is deeply fulfilling, balanced, and sustainable.</p>`;
+        }
+    }
+    if (mContent) mContent.innerHTML = bodyContent;
+    
+    // Show modal
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+};
+
+window.closeReadingModal = function() {
+    const modal = document.getElementById("reading-modal");
+    if (modal) {
+        modal.classList.remove("open");
+        document.body.style.overflow = "";
+    }
+};
+
+// Add key listener for Escape to close modal
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeReadingModal();
+    }
+});

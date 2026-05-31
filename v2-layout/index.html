@@ -367,6 +367,30 @@
     <!-- Scripts -->
     <script src="script.js"></script>
 
+    <!-- Premium Reading View Modal -->
+    <div class="reading-modal-backdrop" id="reading-modal" onclick="if(event.target === this) closeReadingModal();">
+        <div class="reading-modal-card">
+            <button class="reading-modal-close" onclick="closeReadingModal()" id="close-reading-btn" aria-label="Close reading view">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="reading-modal-body">
+                <div class="reading-modal-meta">
+                    <span class="reading-modal-badge" id="modal-badge">Tech</span>
+                    <span class="reading-modal-meta-item"><i class="fa-regular fa-clock"></i> <span id="modal-readtime">5 min read</span></span>
+                    <span class="reading-modal-meta-item"><i class="fa-regular fa-calendar"></i> <span id="modal-date">May 20, 2026</span></span>
+                </div>
+                <h1 class="reading-modal-title" id="modal-title">How Artificial Intelligence is Changing Everyday Life</h1>
+                <div class="reading-modal-author">
+                    <span>Written by: <strong id="modal-author">Alex Rivers</strong></span>
+                </div>
+                <div class="reading-modal-image" id="modal-image"></div>
+                <div class="reading-modal-content" id="modal-content">
+                    <!-- Full story content injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- V3 Premium Elastic Share Toast Alert -->
     <div id="share-toast">
         <i class="fa-solid fa-circle-check" style="color:#10B981; font-size:16px;"></i>
