@@ -946,6 +946,8 @@ button {
     overflow-x: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE */
+    width: 100%;
+    max-width: 100%;
 }
 
 .category-pills-wrap::-webkit-scrollbar {
@@ -1738,6 +1740,9 @@ button {
     .layout-grid-columns {
         grid-template-columns: 1fr;
         gap: 40px;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .ad-skyscraper-wrap {
@@ -1786,10 +1791,25 @@ button {
     }
 
     /* Feed Filter Bar adjustments */
+    .feed-control-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
     .feed-control-inner {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .category-pills-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
     }
 
     .search-box-wrap {
