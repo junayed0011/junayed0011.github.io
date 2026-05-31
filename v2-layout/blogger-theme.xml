@@ -562,12 +562,13 @@ button {
    4. Monetization Ad Placers CSS
    ========================================================================== */
 .ad-container {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 35px auto;
     text-align: center;
     position: relative;
-    overflow: hidden;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
 .ad-label {
@@ -586,12 +587,14 @@ button {
     border: 1px dashed rgba(var(--accent-brand-rgb), 0.25) !important;
     border-radius: var(--border-radius-md);
     position: relative;
-    overflow: hidden;
+    overflow: hidden !important;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .ad-placeholder-graphic:hover {
