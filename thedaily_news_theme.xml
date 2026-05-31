@@ -2211,6 +2211,15 @@ mark.search-highlight {
                             
                                                         <!-- Index, Label, Search & Archive Layout Views -->
                             <b:if cond='data:blog.pageType == &quot;index&quot; or data:blog.pageType == &quot;archive&quot; or data:view.isMultipleItems'>
+                                <b:if cond='data:posts.empty'>
+                                    <!-- Dynamic Premium Empty State Block -->
+                                    <div class='feed-empty-state'>
+                                        <div class='empty-icon'><i class='fa-solid fa-folder-open'></i></div>
+                                        <h3>No briefs found</h3>
+                                        <p>There are no more articles available in this section. Browse our recent categories or return to the homepage.</p>
+                                        <a class='btn btn-primary' href='/'>Return Home <i class='fa-solid fa-house-chimney'></i></a>
+                                    </div>
+                                <b:else/>
                                 
                                 <!-- Hero Editorial Grid Section -->
                                 <div class='hero-editorial-section'>
@@ -2391,6 +2400,7 @@ mark.search-highlight {
                                         </div>
                                     </article>
                                 </b:loop>
+                                </b:if>
                             </b:if>
                             
                             <!-- Blogger standard pagination links -->
