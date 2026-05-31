@@ -2186,7 +2186,9 @@ mark.search-highlight {
                                                          <b:elseif cond='data:post.thumbnailUrl'/>
                                                              <img class='card-bg-image' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' style='object-fit: cover; width: 100%; height: 100%; display: block;'/>
                                                          <b:else/>
-                                                             <div class='card-bg-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
+                                                             <!-- Hidden container with body to parse external images via JS -->
+                                                             <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
+                                                             <div class='card-bg-image dynamic-js-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
                                                          </b:if>
                                                          <div class='card-gradient-overlay'></div>
                                                      </div>
@@ -2227,7 +2229,9 @@ mark.search-highlight {
                                                              <b:elseif cond='data:post.thumbnailUrl'/>
                                                                  <img class='sub-card-bg-image' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' style='object-fit: cover; width: 100%; height: 100%; display: block;'/>
                                                              <b:else/>
-                                                                 <div class='sub-card-bg-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
+                                                                 <!-- Hidden container with body to parse external images via JS -->
+                                                                 <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
+                                                                 <div class='sub-card-bg-image dynamic-js-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
                                                              </b:if>
                                                              <div class='sub-card-overlay'></div>
                                                          </div>
@@ -2305,7 +2309,9 @@ mark.search-highlight {
                                                     <b:elseif cond='data:post.thumbnailUrl'/>
                                                         <img class='card-img' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' loading='lazy'/>
                                                     <b:else/>
-                                                        <div class='card-img' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); opacity: 0.15;'></div>
+                                                        <!-- Hidden container with body to parse external images via JS -->
+                                                        <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
+                                                        <div class='card-img dynamic-js-card-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); opacity: 0.15;'></div>
                                                     </b:if>
                                                 </a>
                                                 <div class='card-body'>
@@ -2624,6 +2630,33 @@ mark.search-highlight {
                 }, 1000);
             });
         }
+
+        // Parse and render external Unsplash/Pollinations images for post cards
+        document.querySelectorAll('.dynamic-js-image').forEach(placeholder => {
+            const parent = placeholder.parentElement;
+            const hiddenBody = parent.querySelector('.hidden-body-content');
+            if (hiddenBody) {
+                const imgRegex = /<img[^>]+src="([^">]+)"/;
+                const match = hiddenBody.innerHTML.match(imgRegex);
+                if (match && match[1]) {
+                    const imgSrc = match[1];
+                    placeholder.style.background = `url('${imgSrc}') center/cover no-repeat`;
+                }
+            }
+        });
+
+        document.querySelectorAll('.dynamic-js-card-image').forEach(placeholder => {
+            const parent = placeholder.parentElement;
+            const hiddenBody = parent.querySelector('.hidden-body-content');
+            if (hiddenBody) {
+                const imgRegex = /<img[^>]+src="([^">]+)"/;
+                const match = hiddenBody.innerHTML.match(imgRegex);
+                if (match && match[1]) {
+                    const imgSrc = match[1];
+                    placeholder.outerHTML = `<img class="card-img" src="${imgSrc}" loading="lazy"/>`;
+                }
+            }
+        });
     });
 
     // Copying Share Link to Clipboard toast control
