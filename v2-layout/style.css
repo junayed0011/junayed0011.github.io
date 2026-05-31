@@ -69,6 +69,7 @@
 /* Smooth Scrolling Offset */
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden !important;
 }
 
 body {
@@ -77,7 +78,7 @@ body {
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     transition: background-color var(--theme-transition), color var(--theme-transition);
 }
 
@@ -135,6 +136,7 @@ button {
     border-bottom: 1px solid var(--divider);
     z-index: 999;
     position: relative;
+    overflow: hidden;
 }
 
 .ticker-container {
@@ -441,13 +443,15 @@ button {
     z-index: 1001;
     padding: 30px 24px;
     box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
+    visibility: hidden;
 }
 
 .mobile-drawer.open {
     right: 0;
+    visibility: visible;
 }
 
 .drawer-header {
@@ -517,9 +521,11 @@ button {
    ========================================================================== */
 .ad-container {
     width: 100%;
+    max-width: 100%;
     margin: 35px auto;
     text-align: center;
     position: relative;
+    overflow: hidden;
 }
 
 .ad-label {
@@ -543,6 +549,7 @@ button {
     align-items: center;
     justify-content: center;
     transition: border-color 0.3s ease, background-color var(--theme-transition);
+    max-width: 100%;
 }
 
 .ad-placeholder-graphic::before {
