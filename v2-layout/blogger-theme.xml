@@ -2099,7 +2099,7 @@ mark.search-highlight {
             <!-- Navigation Links -->
             <nav class='main-nav' id='desktop-nav' aria-label='Main Navigation'>
                 <ul class='nav-links'>
-                    <li><a href='/' class='nav-link active'>Home</a></li>
+                    <li><a href='/' class='nav-link'>Home</a></li>
                     <li><a href='/search/label/Tech' class='nav-link'>Tech</a></li>
                     <li><a href='/search/label/Finance' class='nav-link'>Finance</a></li>
                     <li><a href='/search/label/Lifestyle' class='nav-link'>Lifestyle</a></li>
@@ -2142,7 +2142,7 @@ mark.search-highlight {
         </div>
         <nav class='mobile-nav' aria-label='Mobile Navigation'>
             <ul class='mobile-nav-links'>
-                <li><a href='/' class='mobile-nav-link active'>Home</a></li>
+                <li><a href='/' class='mobile-nav-link'>Home</a></li>
                 <li><a href='/search/label/Tech' class='mobile-nav-link'>Tech</a></li>
                 <li><a href='/search/label/Finance' class='mobile-nav-link'>Finance</a></li>
                 <li><a href='/search/label/Lifestyle' class='mobile-nav-link'>Lifestyle</a></li>
@@ -2688,6 +2688,24 @@ mark.search-highlight {
 
         // Initialize secure parser
         loadExternalThumbnails();
+
+        // Dynamic Active Navigation Link Highlighter
+        const currentPath = window.location.pathname.replace(/\/$/, "");
+        const currentCleanPath = currentPath === "" ? "/" : currentPath;
+
+        document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+            try {
+                const linkUrl = new URL(link.href, window.location.origin);
+                const linkPath = linkUrl.pathname.replace(/\/$/, "");
+                const linkCleanPath = linkPath === "" ? "/" : linkPath;
+
+                if (currentCleanPath === linkCleanPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            } catch (e) {}
+        });
     });
 
     // Copying Share Link to Clipboard toast control
