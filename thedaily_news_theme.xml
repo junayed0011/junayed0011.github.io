@@ -101,7 +101,8 @@ html {
 }
 
 body {
-    background-color: var(--bg-primary);
+    background-color: var(--bg-primary) !important;
+    background-image: none !important;
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 16px;
@@ -563,15 +564,20 @@ button {
 }
 
 .ad-placeholder-graphic {
-    background-color: var(--ad-bg);
-    border: 1px dashed var(--ad-border);
+    background-color: rgba(var(--accent-brand-rgb), 0.02) !important;
+    border: 1px dashed rgba(var(--accent-brand-rgb), 0.25) !important;
     border-radius: var(--border-radius-md);
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.3s ease, background-color var(--theme-transition);
+    transition: all 0.3s ease;
+}
+
+.ad-placeholder-graphic:hover {
+    border-color: var(--accent-brand) !important;
+    background-color: rgba(var(--accent-brand-rgb), 0.04) !important;
 }
 
 .ad-placeholder-graphic::before {
@@ -625,7 +631,7 @@ button {
 
 /* Leaderboard Specific layout size */
 .ad-leaderboard-wrap .ad-placeholder-graphic {
-    min-height: 98px;
+    min-height: 72px;
 }
 
 /* In-Feed Banner layout size */
@@ -2186,8 +2192,6 @@ mark.search-highlight {
                                                          <b:elseif cond='data:post.thumbnailUrl'/>
                                                              <img class='card-bg-image' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' style='object-fit: cover; width: 100%; height: 100%; display: block;'/>
                                                          <b:else/>
-                                                             <!-- Hidden container with body to parse external images via JS -->
-                                                             <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
                                                              <div class='card-bg-image dynamic-js-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
                                                          </b:if>
                                                          <div class='card-gradient-overlay'></div>
@@ -2229,8 +2233,6 @@ mark.search-highlight {
                                                              <b:elseif cond='data:post.thumbnailUrl'/>
                                                                  <img class='sub-card-bg-image' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' style='object-fit: cover; width: 100%; height: 100%; display: block;'/>
                                                              <b:else/>
-                                                                 <!-- Hidden container with body to parse external images via JS -->
-                                                                 <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
                                                                  <div class='sub-card-bg-image dynamic-js-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); width: 100%; height: 100%;'></div>
                                                              </b:if>
                                                              <div class='sub-card-overlay'></div>
@@ -2309,8 +2311,6 @@ mark.search-highlight {
                                                     <b:elseif cond='data:post.thumbnailUrl'/>
                                                         <img class='card-img' expr:src='data:post.thumbnailUrl' expr:alt='data:post.title' loading='lazy'/>
                                                     <b:else/>
-                                                        <!-- Hidden container with body to parse external images via JS -->
-                                                        <div class='hidden-body-content' style='display:none;'><data:post.body/></div>
                                                         <div class='card-img dynamic-js-card-image' style='background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)); opacity: 0.15;'></div>
                                                     </b:if>
                                                 </a>
@@ -2631,32 +2631,63 @@ mark.search-highlight {
             });
         }
 
-        // Parse and render external Unsplash/Pollinations images for post cards
-        document.querySelectorAll('.dynamic-js-image').forEach(placeholder => {
-            const parent = placeholder.parentElement;
-            const hiddenBody = parent.querySelector('.hidden-body-content');
-            if (hiddenBody) {
-                const imgRegex = /<img[^>]+src="([^">]+)"/;
-                const match = hiddenBody.innerHTML.match(imgRegex);
-                if (match && match[1]) {
-                    const imgSrc = match[1];
-                    placeholder.style.background = `url('${imgSrc}') center/cover no-repeat`;
-                }
-            }
-        });
+        // Secure, High-Performance JSON Feed Thumbnail Loader for External Previews
+        async function loadExternalThumbnails() {
+            try {
+                const response = await fetch('/feeds/posts/default?alt=json&max-results=30');
+                if (!response.ok) return;
+                const data = await response.json();
+                const entries = data.feed.entry || [];
+                
+                // Map of clean post URL (relative path) to Unsplash/AI image URL
+                const imageMap = {};
+                entries.forEach(entry => {
+                    const content = entry.content ? entry.content.$t : "";
+                    const altLink = entry.link ? entry.link.find(l => l.rel === "alternate") : null;
+                    if (altLink && altLink.href) {
+                        // Extract only path to avoid protocol/subdomain mismatches
+                        const pathKey = new URL(altLink.href).pathname;
+                        const imgRegex = /<img[^>]+src="([^">]+)"/;
+                        const match = content.match(imgRegex);
+                        if (match && match[1]) {
+                            imageMap[pathKey] = match[1];
+                        }
+                    }
+                });
 
-        document.querySelectorAll('.dynamic-js-card-image').forEach(placeholder => {
-            const parent = placeholder.parentElement;
-            const hiddenBody = parent.querySelector('.hidden-body-content');
-            if (hiddenBody) {
-                const imgRegex = /<img[^>]+src="([^">]+)"/;
-                const match = hiddenBody.innerHTML.match(imgRegex);
-                if (match && match[1]) {
-                    const imgSrc = match[1];
-                    placeholder.outerHTML = `<img class="card-img" src="${imgSrc}" loading="lazy"/>`;
-                }
+                // Traverse and render thumbnails dynamically
+                document.querySelectorAll('article.featured-card, article.sub-featured-card, article.post-card').forEach(card => {
+                    const links = card.querySelectorAll('a[href]');
+                    let matchedImgSrc = null;
+                    
+                    for (let link of links) {
+                        try {
+                            const path = new URL(link.href, window.location.origin).pathname;
+                            if (imageMap[path]) {
+                                matchedImgSrc = imageMap[path];
+                                break;
+                            }
+                        } catch(e) {}
+                    }
+
+                    if (matchedImgSrc) {
+                        const bgImg = card.querySelector('.dynamic-js-image');
+                        if (bgImg) {
+                            bgImg.style.background = `url('${matchedImgSrc}') center/cover no-repeat`;
+                        }
+                        const cardImg = card.querySelector('.dynamic-js-card-image');
+                        if (cardImg) {
+                            cardImg.outerHTML = `<img class="card-img" src="${matchedImgSrc}" loading="lazy"/>`;
+                        }
+                    }
+                });
+            } catch (err) {
+                console.warn('[PULSE] External thumbnails loader failed:', err);
             }
-        });
+        }
+
+        // Initialize secure parser
+        loadExternalThumbnails();
     });
 
     // Copying Share Link to Clipboard toast control
