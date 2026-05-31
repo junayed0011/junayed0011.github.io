@@ -2865,8 +2865,8 @@ mark.search-highlight {
         <!-- Sub-Footer Copyright credits -->
         <div class='footer-bottom'>
             <div class='container footer-bottom-inner'>
-                <p class='copyright-text'>&amp;copy; <span id='footer-year'>2026</span> The Daily Pulse. Engineered with premium design aesthetics. All rights reserved.</p>
-                <p class='branding-credits'>Powered by Autopilot blogging engine &amp; Gemini 3.5 High.</p>
+                <p class='copyright-text'>&#169; <span id='footer-year'>2026</span> The Daily Pulse. Engineered with premium design aesthetics. All rights reserved.</p>
+                <p class='branding-credits'>Powered by JX Superior</p>
             </div>
         </div>
     </footer>
