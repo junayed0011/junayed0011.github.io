@@ -20,10 +20,10 @@ FEEDS = {
 }
 
 KEYWORDS = {
-    "tech": ["ai", "tech", "software", "development", "cybersecurity", "google", "apple", "app", "meta", "nvidia", "artificial intelligence", "coding", "web", "robotics"],
-    "finance": ["money", "stock", "invest", "crypto", "bitcoin", "budget", "saving", "cash", "wealth", "interest", "inflation", "market", "gold", "bank"],
-    "lifestyle": ["health", "workout", "sleep", "diet", "nutrition", "fitness", "wellness", "habit", "recipe", "travel", "nature", "meditation"],
-    "mindset": ["mindset", "focus", "productive", "motivation", "routine", "discipline", "mindfulness", "brain", "habit", "success", "goal", "learn"]
+    "tech": ["ai tools", "saas", "automation", "developer tools", "cybersecurity", "nvidia", "chatgpt", "cloud", "software-engineering", "artificial intelligence", "coding"],
+    "finance": ["credit card", "investing", "index funds", "dividend", "passive income", "real estate", "side hustle", "retirement", "budgeting apps", "saving", "wealth"],
+    "lifestyle": ["circadian rhythm", "biohacking", "sleep optimization", "organic nutrition", "cognitive longevity", "wellness habits", "health", "workout", "meditation"],
+    "mindset": ["neuroplasticity", "dopamine detox", "time blocking", "peak performance", "atomic habits", "deep work", "productive", "motivation", "discipline"]
 }
 
 def fetch_feed_data(url):
