@@ -78,19 +78,50 @@ def get_unsplash_image(topic):
     return None, None, None, None
 
 def get_pollinations_image(topic):
-    """Fallback: AI-generated image from Pollinations.ai."""
+    """Fallback: AI-generated image from Pollinations.ai.
+    
+    Follows the redirect to obtain the final static CDN URL so that
+    Blogger's thumbnail crawler can scrape a real image file.
+    """
     try:
         clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
         prompt = clean_topic.replace(" ", "%20")
-        img_url = f"https://image.pollinations.ai/prompt/{prompt}?width=800&height=450&nologo=true"
-        print(f"[IMAGE] Using Pollinations AI generation: {img_url}")
-        return img_url, topic, None, None
+        poll_url = f"https://image.pollinations.ai/prompt/{prompt}?width=800&height=450&nologo=true"
+        # Follow redirect to get a stable, static image URL
+        resp = requests.get(poll_url, timeout=30, allow_redirects=True)
+        if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image/"):
+            # Use the final resolved URL (may be the same or a CDN redirect)
+            final_url = resp.url
+            print(f"[IMAGE] Pollinations resolved to: {final_url}")
+            return final_url, topic, None, None
+        else:
+            print(f"[IMAGE] Pollinations returned status {resp.status_code}; using Picsum fallback.")
     except Exception as e:
         print(f"[IMAGE] Pollinations failed: {e}")
+    return get_picsum_image(topic)
+
+def get_picsum_image(topic):
+    """Last-resort fallback: deterministic landscape photo from Picsum Photos.
+    
+    Picsum always returns a real JPEG, no API key required.
+    We seed the image ID from the topic string so each topic gets a
+    consistent (but varied) image across reruns.
+    """
+    try:
+        seed = abs(hash(topic)) % 1000  # 0-999 deterministic seed
+        img_url = f"https://picsum.photos/seed/{seed}/800/450"
+        # Follow redirect to get the real static URL
+        resp = requests.get(img_url, timeout=15, allow_redirects=True)
+        if resp.status_code == 200:
+            final_url = resp.url
+            print(f"[IMAGE] Picsum fallback resolved to: {final_url}")
+            return final_url, topic, None, None
+    except Exception as e:
+        print(f"[IMAGE] Picsum fallback failed: {e}")
     return None, None, None, None
 
 def get_image(topic):
-    """Try Unsplash first, fallback to Pollinations."""
+    """Try Unsplash first, then Pollinations AI, then Picsum Photos."""
     if UNSPLASH_ACCESS_KEY:
         img_url, alt, credit_name, credit_link = get_unsplash_image(topic)
         if img_url:
