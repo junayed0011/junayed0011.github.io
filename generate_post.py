@@ -10,6 +10,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 import trends_researcher
+import social_share
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "")
@@ -23,6 +24,39 @@ if "BLOGGER_SERVICE_ACCOUNT" in os.environ:
     except Exception as e:
         print(f"[ERROR] Failed to parse service account JSON environment variable: {e}")
 
+# ─────────────────────────────────────────────
+# DUPLICATE POST GUARD
+# ─────────────────────────────────────────────
+
+PUBLISHED_LOG = os.path.join(os.path.dirname(__file__), "published_titles.json")
+
+def load_published_titles():
+    """Load previously published post titles from the local log file."""
+    if os.path.exists(PUBLISHED_LOG):
+        try:
+            with open(PUBLISHED_LOG, "r", encoding="utf-8") as f:
+                return set(json.load(f))
+        except Exception as e:
+            print(f"[DUPLICATE] Warning: could not read published log: {e}")
+    return set()
+
+def save_published_title(title):
+    """Append a title to the published log so it's never reused."""
+    titles = load_published_titles()
+    titles.add(title.strip().lower())
+    try:
+        with open(PUBLISHED_LOG, "w", encoding="utf-8") as f:
+            json.dump(list(titles), f, indent=2)
+        print(f"[DUPLICATE] Title logged: {title}")
+    except Exception as e:
+        print(f"[DUPLICATE] Warning: could not save published log: {e}")
+
+def is_duplicate(title):
+    """Return True if this exact title was already published."""
+    return title.strip().lower() in load_published_titles()
+
+
+# ─────────────────────────────────────────────
 def get_unsplash_image(topic):
     """Fetch a relevant image from Unsplash."""
     try:
@@ -158,6 +192,22 @@ def generate_post(topic_offset=0):
     
     print(f"[AUTOMATION] Pillar: {category.upper()} | Selected Live Trend: {topic}")
 
+    # ── Duplicate post guard ──────────────────────────────────────────────────
+    if is_duplicate(topic):
+        print(f"[DUPLICATE] Skipping '{topic}' — already published. Fetching alternative topic...")
+        # Try up to 5 alternatives from the same feed before giving up
+        for _ in range(5):
+            trend = trends_researcher.get_trending_topic(category)
+            topic = trend["title"]
+            trend_desc = trend["description"]
+            if not is_duplicate(topic):
+                print(f"[DUPLICATE] Alternative selected: {topic}")
+                break
+        else:
+            print("[DUPLICATE] All candidate topics already published. Skipping this run.")
+            return
+    # ─────────────────────────────────────────────────────────────────────────
+
     # Fetch visual graphic header
     img_url, alt, credit_name, credit_link = get_image(topic)
 
@@ -169,22 +219,28 @@ def generate_post(topic_offset=0):
         else:
             image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:12px; margin-bottom:24px;"/>\n'
 
-    prompt = f"""Write a premium, highly engaging, and search-optimized news/blog briefing about: "{topic}".
-Niche category: {category.upper()}.
-Background Context: "{trend_desc}".
+    prompt = f"""You are a senior editorial journalist and SEO strategist writing for a high-authority news blog.
+Write a deeply researched, premium long-form article about: "{topic}".
+Niche: {category.upper()}. Background context: "{trend_desc}".
 
-Search Engine Optimization (SEO) Rules:
-- Include the exact query phrase "{topic}" naturally within the first paragraph and a subheading.
-- Structurally lay out the post using semantic ## (H2) and ### (H3) subheadings (at least 4 sections).
-- Include bullet points, data-driven reasoning, and practical, actionable tips.
-- Maintain a highly engaging, professional editorial news tone.
-- Length: 800-1000 words.
+━━━ CONTENT QUALITY RULES (E-E-A-T) ━━━
+- Show EXPERIENCE: Open with a concrete real-world scenario, statistic, or expert quote that proves first-hand depth.
+- Show EXPERTISE: Include at least 2 specific data points (percentages, studies, named sources) relevant to "{topic}".
+- Show AUTHORITATIVENESS: Reference at least 1 real company, person, or published study by name.
+- Show TRUSTWORTHINESS: Acknowledge nuance — mention what the trend does NOT solve or its limitations.
 
-Formatting Structure:
-- Start with a single # Title
-- End the post with a section: [META_DESCRIPTION: write a compelling, high-click-through 140-160 character search meta description here summarizing the article]
+━━━ SEO RULES ━━━
+- Use the exact phrase "{topic}" naturally in: the title, first paragraph, one H2 subheading, and the conclusion.
+- Use LSI keywords naturally (related terms, synonyms — do NOT keyword stuff).
+- Structure: minimum 5 sections using ## H2 and ### H3 headings.
+- Include at least one numbered list AND one bullet-point list.
+- Target 900–1100 words for optimal dwell time.
 
-Only return the Markdown content. Do not include introductory notes or friendly remarks."""
+━━━ FORMATTING ━━━
+- Start with one # Title (make it curiosity-driven and click-worthy — NOT clickbait).
+- End with: [META_DESCRIPTION: a 145–160 character meta description with primary keyword at the start]
+
+Return ONLY the Markdown. No preamble, no sign-offs, no meta-commentary."""
 
     # Generate content using Groq
     if not GROQ_API_KEY:
@@ -266,7 +322,16 @@ Embracing this development will position you at the forefront of the industry.
                 body=post_body, 
                 isDraft=False
             ).execute()
-            print(f"[SUCCESS] Dynamic Post Published Successfully: {result['url']}")
+            post_url = result.get("url", "")
+            print(f"[SUCCESS] Dynamic Post Published Successfully: {post_url}")
+            save_published_title(title)
+            # Share to social media platforms
+            social_share.share_post(
+                title=title,
+                post_url=post_url,
+                image_url=img_url,
+                category=category
+            )
         except Exception as e:
             print(f"[ERROR] Blogger API publishing failed: {e}")
     else:
