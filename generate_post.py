@@ -30,6 +30,19 @@ if "BLOGGER_SERVICE_ACCOUNT" in os.environ:
 
 PUBLISHED_LOG = os.path.join(os.path.dirname(__file__), "published_titles.json")
 
+# Stop-words to ignore in similarity comparison
+_STOP_WORDS = {
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "it", "its", "as", "are", "was",
+    "be", "that", "this", "how", "why", "what", "who", "just", "amid",
+    "into", "up", "now", "new", "amid", "time", "says", "amid"
+}
+
+def _title_keywords(title):
+    """Return significant lowercase words from a title (no stop-words, len>2)."""
+    words = re.findall(r'[a-z]+', title.lower())
+    return {w for w in words if w not in _STOP_WORDS and len(w) > 2}
+
 def load_published_titles():
     """Load previously published post titles from the local log file."""
     if os.path.exists(PUBLISHED_LOG):
@@ -52,8 +65,31 @@ def save_published_title(title):
         print(f"[DUPLICATE] Warning: could not save published log: {e}")
 
 def is_duplicate(title):
-    """Return True if this exact title was already published."""
-    return title.strip().lower() in load_published_titles()
+    """Return True if an identical OR near-duplicate title was already published.
+    
+    Near-duplicate: ≥60% of the significant keywords in the candidate title
+    already appear in any previously published title.
+    """
+    published = load_published_titles()
+    norm = title.strip().lower()
+
+    # Exact match
+    if norm in published:
+        return True
+
+    # Fuzzy keyword-overlap check
+    candidate_kw = _title_keywords(title)
+    if not candidate_kw:
+        return False
+    for pub_title in published:
+        pub_kw = _title_keywords(pub_title)
+        if not pub_kw:
+            continue
+        overlap = len(candidate_kw & pub_kw) / len(candidate_kw)
+        if overlap >= 0.60:
+            print(f"[DUPLICATE] Near-duplicate detected ({overlap:.0%} overlap) with: '{pub_title}'")
+            return True
+    return False
 
 
 # ─────────────────────────────────────────────
