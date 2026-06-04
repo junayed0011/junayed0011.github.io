@@ -3343,9 +3343,9 @@ mark.search-highlight {
                                         <!-- Share Bar -->
                                         <div class='post-share-bar'>
                                             <span class='post-share-label'><i class='fa-solid fa-share-nodes'></i> Share</span>
-                                            <a expr:href='"https://twitter.com/intent/tweet?url=" + data:post.url + "&text=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-x-twitter'></i> Twitter</a>
+                                            <a expr:href='"https://twitter.com/intent/tweet?url=" + data:post.url + "&amp;text=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-x-twitter'></i> Twitter</a>
                                             <a expr:href='"https://www.facebook.com/sharer/sharer.php?u=" + data:post.url' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-facebook-f'></i> Facebook</a>
-                                            <a expr:href='"https://www.linkedin.com/shareArticle?mini=true&url=" + data:post.url + "&title=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-linkedin-in'></i> LinkedIn</a>
+                                            <a expr:href='"https://www.linkedin.com/shareArticle?mini=true&amp;url=" + data:post.url + "&amp;title=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-linkedin-in'></i> LinkedIn</a>
                                             <button class='post-share-btn' expr:onclick='"copyShareLink(\&quot;" + data:post.url + "\&quot;, event)"'><i class='fa-solid fa-link'></i> Copy Link</button>
                                         </div>
                                         
