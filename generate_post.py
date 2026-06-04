@@ -113,16 +113,42 @@ def get_unsplash_image(topic):
         print(f"[IMAGE] Unsplash query failed: {e}")
     return None, None, None, None
 
-def get_pollinations_image(topic):
-    """Fallback: AI-generated image from Pollinations.ai.
+def generate_image_prompt(topic, category="lifestyle"):
+    """Generates a high-quality visual prompt for AI image generation from a post topic."""
+    if not GROQ_API_KEY:
+        return topic  # Fallback to topic if no LLM key
+    
+    prompt = f"""You are an art director. Generate a short, highly descriptive visual prompt for an AI image generator (Stable Diffusion) based on the following article topic.
+Topic: "{topic}"
+Niche: {category.upper()}
+
+Rules:
+- Describe a concrete, beautiful, visual scene (e.g. objects, lighting, color style).
+- Do NOT include any text, letters, or logos in the image description.
+- Use cinematic and artistic keywords (e.g. "photorealistic, cinematic lighting, 8k, modern design").
+- Keep it under 25 words.
+- Return ONLY the prompt text, no preamble, no quotes, no explanations."""
+
+    try:
+        response = call_groq(prompt)
+        cleaned = response.strip().strip('"').strip("'")
+        print(f"[IMAGE] Generated visual prompt: {cleaned}")
+        return cleaned
+    except Exception as e:
+        print(f"[IMAGE] Failed to generate visual prompt: {e}")
+        return topic
+
+def get_pollinations_image(topic, category="lifestyle"):
+    """AI-generated image from Pollinations.ai.
     
     Follows the redirect to obtain the final static CDN URL so that
     Blogger's thumbnail crawler can scrape a real image file.
     """
     try:
-        clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
-        prompt = clean_topic.replace(" ", "%20")
-        poll_url = f"https://image.pollinations.ai/prompt/{prompt}?width=800&height=450&nologo=true"
+        visual_prompt = generate_image_prompt(topic, category)
+        clean_prompt = re.sub(r'[^a-zA-Z0-9\s]', '', visual_prompt)
+        prompt_encoded = clean_prompt.replace(" ", "%20")
+        poll_url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=800&height=450&nologo=true"
         # Follow redirect to get a stable, static image URL
         resp = requests.get(poll_url, timeout=30, allow_redirects=True)
         if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image/"):
@@ -156,13 +182,18 @@ def get_picsum_image(topic):
         print(f"[IMAGE] Picsum fallback failed: {e}")
     return None, None, None, None
 
-def get_image(topic):
-    """Try Unsplash first, then Pollinations AI, then Picsum Photos."""
+def get_image(topic, category="lifestyle"):
+    """Try Pollinations AI (free AI generator) first to get visual specific images, then fallback to Unsplash/Picsum."""
+    img_url, alt, credit_name, credit_link = get_pollinations_image(topic, category)
+    if img_url and "picsum.photos" not in img_url:
+        return img_url, alt, credit_name, credit_link
+        
     if UNSPLASH_ACCESS_KEY:
-        img_url, alt, credit_name, credit_link = get_unsplash_image(topic)
-        if img_url:
-            return img_url, alt, credit_name, credit_link
-    return get_pollinations_image(topic)
+        u_url, u_alt, u_name, u_link = get_unsplash_image(topic)
+        if u_url:
+            return u_url, u_alt, u_name, u_link
+            
+    return img_url, alt, credit_name, credit_link
 
 def call_groq(prompt):
     """Executes call to Groq Llama model with rate limit retries."""
@@ -354,7 +385,7 @@ def generate_post(topic_offset=0):
     # ─────────────────────────────────────────────────────────────────────────
 
     # Fetch visual graphic header
-    img_url, alt, credit_name, credit_link = get_image(topic)
+    img_url, alt, credit_name, credit_link = get_image(topic, category)
 
     # Build image credit caption
     image_html = ""
