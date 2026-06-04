@@ -443,12 +443,15 @@ Embracing this development will position you at the forefront of the industry.
     filename = f"{date_str}-{offset_prefix}-{slug}.md"
     filepath = os.path.join(posts_dir, filename)
     
+    escaped_title = title.replace('"', '\\"')
+    escaped_meta_desc = meta_desc.replace('"', '\\"')
+    
     front_matter = f"""---
 layout: post
-title: "{title.replace('"', '\\"')}"
+title: "{escaped_title}"
 date: {date_str} {post_time_str}
 categories: [blog]
-description: "{meta_desc.replace('"', '\\"')}"
+description: "{escaped_meta_desc}"
 image: {img_url or ""}
 ---
 
