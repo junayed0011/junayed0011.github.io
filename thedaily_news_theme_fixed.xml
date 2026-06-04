@@ -7,6 +7,139 @@
     
     <!-- Blogger Dynamic Head Content -->
     <b:include data='blog' name='all-head-content'/>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SEO MASTER BLOCK — Open Graph, Twitter Card, Structured Data
+         ══════════════════════════════════════════════════════════ -->
+
+    <!-- Primary Meta Description (Blogger auto-adds on post pages) -->
+    <b:if cond='data:blog.metaDescription'>
+        <meta expr:content='data:blog.metaDescription' name='description'/>
+    </b:if>
+
+    <!-- Canonical URL — prevents duplicate content penalties -->
+    <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
+
+    <!-- Robots: Allow large image preview for Google Discover traffic -->
+    <meta content='max-image-preview:large, max-snippet:-1, max-video-preview:-1' name='robots'/>
+
+    <!-- ── Open Graph (Facebook, LinkedIn, WhatsApp previews) ── -->
+    <meta content='The Daily Pulse' property='og:site_name'/>
+    <b:if cond='data:blog.pageType == &quot;item&quot;'>
+        <!-- Single Post Page OG tags -->
+        <b:loop values='data:posts' var='post'>
+            <meta expr:content='data:post.title' property='og:title'/>
+            <meta content='article' property='og:type'/>
+            <meta expr:content='data:post.url' property='og:url'/>
+            <b:if cond='data:post.firstImageUrl'>
+                <meta expr:content='data:post.firstImageUrl' property='og:image'/>
+                <meta content='1200' property='og:image:width'/>
+                <meta content='675' property='og:image:height'/>
+            </b:if>
+            <b:if cond='data:post.snippet'>
+                <meta expr:content='data:post.snippet' property='og:description'/>
+            </b:if>
+            <meta expr:content='data:post.dateHeader' property='article:published_time'/>
+            <b:loop values='data:post.labels' var='label'>
+                <meta expr:content='data:label.name' property='article:tag'/>
+            </b:loop>
+        </b:loop>
+    <b:else/>
+        <!-- Homepage / Archive OG tags -->
+        <meta content='The Daily Pulse — Premium Viral News &amp; Daily Insights' property='og:title'/>
+        <meta content='website' property='og:type'/>
+        <meta expr:content='data:blog.homepageUrl' property='og:url'/>
+        <meta content='Your premium daily digest of trending technology, finance, lifestyle and mindset insights. Curated to keep you ahead.' property='og:description'/>
+    </b:if>
+    <meta content='en_US' property='og:locale'/>
+
+    <!-- ── Twitter / X Card tags ── -->
+    <meta content='summary_large_image' name='twitter:card'/>
+    <meta content='@DailyPulseTrend' name='twitter:site'/>
+    <b:if cond='data:blog.pageType == &quot;item&quot;'>
+        <b:loop values='data:posts' var='post'>
+            <meta expr:content='data:post.title' name='twitter:title'/>
+            <b:if cond='data:post.snippet'>
+                <meta expr:content='data:post.snippet' name='twitter:description'/>
+            </b:if>
+            <b:if cond='data:post.firstImageUrl'>
+                <meta expr:content='data:post.firstImageUrl' name='twitter:image'/>
+                <meta expr:content='data:post.title' name='twitter:image:alt'/>
+            </b:if>
+        </b:loop>
+    <b:else/>
+        <meta content='The Daily Pulse — Premium Viral News &amp; Daily Insights' name='twitter:title'/>
+        <meta content='Your curated daily digest of trending tech, finance, lifestyle and mindset insights.' name='twitter:description'/>
+    </b:if>
+
+    <!-- ── JSON-LD Structured Data ── -->
+    <b:if cond='data:blog.pageType == &quot;item&quot;'>
+        <!-- Article Schema for single post pages (enables Google rich results) -->
+        <b:loop values='data:posts' var='post'>
+            <script type='application/ld+json'>
+            {
+              "@context": "https://schema.org",
+              "@type": "Article",
+              "headline": "<data:post.title/>",
+              "description": "<b:if cond='data:post.snippet'><data:post.snippet/></b:if>",
+              "url": "<data:post.url/>",
+              "datePublished": "<data:post.timestamp/>",
+              "dateModified": "<data:post.lastUpdated/>",
+              "image": {
+                "@type": "ImageObject",
+                "url": "<b:if cond='data:post.firstImageUrl'><data:post.firstImageUrl/></b:if>",
+                "width": 1200,
+                "height": 675
+              },
+              "author": {
+                "@type": "Person",
+                "name": "<data:post.author.name/>"
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "The Daily Pulse",
+                "url": "<data:blog.homepageUrl/>",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://dailypulsetrends.blogspot.com/favicon.ico",
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "<data:post.url/>"
+              }
+            }
+            </script>
+        </b:loop>
+    <b:else/>
+        <!-- WebSite Schema for homepage (enables Sitelinks Searchbox) -->
+        <script type='application/ld+json'>
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "The Daily Pulse",
+          "url": "<data:blog.homepageUrl/>",
+          "description": "Premium daily digest of trending technology, finance, lifestyle and mindset insights.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "<data:blog.homepageUrl/>search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+        </script>
+    </b:if>
+
+    <!-- Mobile PWA / Browser UI color -->
+    <meta content='#03040b' name='theme-color'/>
+    <meta content='yes' name='apple-mobile-web-app-capable'/>
+    <meta content='black-translucent' name='apple-mobile-web-app-status-bar-style'/>
+    <!-- ══════════════════════════════════════════════════════════ -->
+
     
         <!-- Premium Google Fonts and Icons Configuration -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -3585,7 +3718,7 @@ mark.search-highlight {
     <!-- Premium Interactive Elements Script CDATA block -->
     <script type='text/javascript'>
     //<![CDATA[
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         const bodyEl = document.documentElement;
         const themeBtn = document.getElementById("theme-mode-btn");
         const scrollBar = document.getElementById("scroll-progress-bar");

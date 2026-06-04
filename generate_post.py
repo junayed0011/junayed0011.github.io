@@ -94,16 +94,17 @@ def is_duplicate(title):
 
 # ─────────────────────────────────────────────
 def get_unsplash_image(topic):
-    """Fetch a relevant image from Unsplash."""
+    """Fetch a high-quality landscape image from Unsplash."""
     try:
         query = topic[:50]
         url = "https://api.unsplash.com/photos/random"
         headers = {"Authorization": f"Client-ID {UNSPLASH_ACCESS_KEY}"}
-        params = {"query": query, "orientation": "landscape"}
+        params = {"query": query, "orientation": "landscape", "content_filter": "high"}
         response = requests.get(url, headers=headers, params=params, timeout=10)
         if response.status_code == 200:
             data = response.json()
-            img_url = data["urls"]["regular"]
+            # Use full-size image at 1200px width for quality
+            img_url = data["urls"]["regular"].replace("w=1080", "w=1200")
             alt = data["alt_description"] or topic
             credit_name = data["user"]["name"]
             credit_link = data["user"]["links"]["html"]
@@ -114,23 +115,34 @@ def get_unsplash_image(topic):
     return None, None, None, None
 
 def generate_image_prompt(topic, category="lifestyle"):
-    """Generates a high-quality visual prompt for AI image generation from a post topic."""
+    """Generates a highly detailed cinematic visual prompt for AI image generation."""
     if not GROQ_API_KEY:
         return topic  # Fallback to topic if no LLM key
     
-    prompt = f"""You are an art director. Generate a short, highly descriptive visual prompt for an AI image generator (Stable Diffusion) based on the following article topic.
+    style_map = {
+        "tech": "sleek futuristic interface, neon blue glow, dark studio, 8k ultra detailed",
+        "finance": "premium financial charts, golden hour light, modern glass office, professional",
+        "lifestyle": "warm golden hour, healthy vibrant colors, modern lifestyle photography",
+        "mindset": "serene minimalist workspace, soft morning light, focused atmosphere, motivational"
+    }
+    style_hint = style_map.get(category, "cinematic lighting, photorealistic, professional photography")
+
+    prompt = f"""You are a professional art director for a premium editorial magazine. Write a concise, vivid visual prompt for an AI image generator (Stable Diffusion) to illustrate the article topic below.
+
 Topic: "{topic}"
-Niche: {category.upper()}
+Category: {category.upper()}
+Style guidance: {style_hint}
 
 Rules:
-- Describe a concrete, beautiful, visual scene (e.g. objects, lighting, color style).
-- Do NOT include any text, letters, or logos in the image description.
-- Use cinematic and artistic keywords (e.g. "photorealistic, cinematic lighting, 8k, modern design").
-- Keep it under 25 words.
-- Return ONLY the prompt text, no preamble, no quotes, no explanations."""
+- Describe ONE concrete, photorealistic visual scene with specific objects, lighting, and color palette
+- Do NOT include text, letters, logos, or people's faces in the description
+- Include camera style: "wide angle shot" or "close-up" or "aerial view"
+- Use: "photorealistic, cinematic lighting, 4k, sharp focus, editorial photography"
+- Maximum 30 words
+- Return ONLY the prompt text, no quotes, no preamble"""
 
     try:
-        response = call_groq(prompt)
+        response = call_groq(prompt, model="llama-3.1-8b-instant", max_tokens=100, temp=0.7)
         cleaned = response.strip().strip('"').strip("'")
         print(f"[IMAGE] Generated visual prompt: {cleaned}")
         return cleaned
@@ -139,23 +151,27 @@ Rules:
         return topic
 
 def get_pollinations_image(topic, category="lifestyle"):
-    """AI-generated image from Pollinations.ai.
+    """AI-generated high-res image from Pollinations.ai.
     
-    Follows the redirect to obtain the final static CDN URL so that
-    Blogger's thumbnail crawler can scrape a real image file.
+    Uses seed for determinism, 1200x675 for landscape quality.
     """
     try:
         visual_prompt = generate_image_prompt(topic, category)
-        clean_prompt = re.sub(r'[^a-zA-Z0-9\s]', '', visual_prompt)
+        # Clean and encode prompt
+        clean_prompt = re.sub(r'[^a-zA-Z0-9\s,.-]', '', visual_prompt)
         prompt_encoded = clean_prompt.replace(" ", "%20")
-        poll_url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=800&height=450&nologo=true"
+        # Use seed from topic hash for consistent per-topic images
+        seed = abs(hash(topic)) % 9999
+        poll_url = (
+            f"https://image.pollinations.ai/prompt/{prompt_encoded}"
+            f"?width=1200&height=675&seed={seed}&nologo=true&enhance=true"
+        )
         # Follow redirect to get a stable, static image URL
-        resp = requests.get(poll_url, timeout=30, allow_redirects=True)
+        resp = requests.get(poll_url, timeout=45, allow_redirects=True)
         if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image/"):
-            # Use the final resolved URL (may be the same or a CDN redirect)
             final_url = resp.url
             print(f"[IMAGE] Pollinations resolved to: {final_url}")
-            return final_url, topic, None, None
+            return final_url, visual_prompt, None, None
         else:
             print(f"[IMAGE] Pollinations returned status {resp.status_code}; using Picsum fallback.")
     except Exception as e:
@@ -163,16 +179,10 @@ def get_pollinations_image(topic, category="lifestyle"):
     return get_picsum_image(topic)
 
 def get_picsum_image(topic):
-    """Last-resort fallback: deterministic landscape photo from Picsum Photos.
-    
-    Picsum always returns a real JPEG, no API key required.
-    We seed the image ID from the topic string so each topic gets a
-    consistent (but varied) image across reruns.
-    """
+    """Last-resort fallback: deterministic landscape photo from Picsum Photos at 1200px."""
     try:
-        seed = abs(hash(topic)) % 1000  # 0-999 deterministic seed
-        img_url = f"https://picsum.photos/seed/{seed}/800/450"
-        # Follow redirect to get the real static URL
+        seed = abs(hash(topic)) % 1000
+        img_url = f"https://picsum.photos/seed/{seed}/1200/675"
         resp = requests.get(img_url, timeout=15, allow_redirects=True)
         if resp.status_code == 200:
             final_url = resp.url
@@ -183,7 +193,7 @@ def get_picsum_image(topic):
     return None, None, None, None
 
 def get_image(topic, category="lifestyle"):
-    """Try Pollinations AI (free AI generator) first to get visual specific images, then fallback to Unsplash/Picsum."""
+    """Try Pollinations AI first, then Unsplash, then Picsum."""
     img_url, alt, credit_name, credit_link = get_pollinations_image(topic, category)
     if img_url and "picsum.photos" not in img_url:
         return img_url, alt, credit_name, credit_link
@@ -195,30 +205,35 @@ def get_image(topic, category="lifestyle"):
             
     return img_url, alt, credit_name, credit_link
 
-def call_groq(prompt):
-    """Executes call to Groq Llama model with rate limit retries."""
+def call_groq(prompt, model="llama-3.3-70b-versatile", max_tokens=4096, temp=0.75):
+    """Executes call to Groq with rate limit retries. Uses 70B model for premium content quality."""
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "llama-3.1-8b-instant",
+        "model": model,
         "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.8,
-        "max_tokens": 2048
+        "temperature": temp,
+        "max_tokens": max_tokens
     }
 
     for attempt in range(3):
-        print(f"[LLM] Dispatching request to Groq (Attempt {attempt + 1})...")
+        print(f"[LLM] Dispatching request to Groq {model} (Attempt {attempt + 1})...")
         response = requests.post(url, headers=headers, json=payload)
 
         if response.status_code == 200:
             return response.json()["choices"][0]["message"]["content"]
         elif response.status_code == 429:
-            wait = 20 * (attempt + 1)
+            wait = 30 * (attempt + 1)
             print(f"[LLM] Rate limit hit. Cooling down {wait}s...")
             time.sleep(wait)
+        elif response.status_code == 400 and "model" in response.text.lower():
+            # Model not available, fall back to 8B
+            print(f"[LLM] Model {model} unavailable, falling back to llama-3.1-8b-instant")
+            payload["model"] = "llama-3.1-8b-instant"
+            payload["max_tokens"] = 2048
         else:
             print(f"[LLM] Error {response.status_code}: {response.text}")
             response.raise_for_status()
@@ -253,7 +268,6 @@ def get_blogger_service():
                 client_id=client_id,
                 client_secret=client_secret
             )
-            # Refresh access token
             creds.refresh(Request())
             service = build("blogger", "v3", credentials=creds)
             print("[AUTH] Successfully authenticated using OAuth 2.0 Refresh Token.")
@@ -283,7 +297,6 @@ def submit_google_indexing(post_url):
     
     print(f"[INDEXING] Initiating indexing submission for: {post_url}")
     
-    # We can use the service account if configured
     service_account_json = None
     if "BLOGGER_SERVICE_ACCOUNT" in os.environ:
         try:
@@ -291,13 +304,11 @@ def submit_google_indexing(post_url):
         except Exception as e:
             print(f"[INDEXING] Error parsing service account for indexing: {e}")
             
-    # Or OAuth credentials
     client_id = os.environ.get("BLOGGER_CLIENT_ID", "")
     client_secret = os.environ.get("BLOGGER_CLIENT_SECRET", "")
     refresh_token = os.environ.get("BLOGGER_REFRESH_TOKEN", "")
 
     creds = None
-    # 1. Try Service Account
     if service_account_json:
         try:
             creds = service_account.Credentials.from_service_account_info(
@@ -308,7 +319,6 @@ def submit_google_indexing(post_url):
         except Exception as e:
             print(f"[INDEXING] Service Account authentication failed: {e}")
 
-    # 2. Try OAuth Refresh Token if Service Account failed or not present
     if not creds and client_id and client_secret and refresh_token:
         try:
             creds = Credentials(
@@ -328,31 +338,31 @@ def submit_google_indexing(post_url):
         return
 
     try:
-        # Refresh credentials to obtain access token
         creds.refresh(Request())
-        
         endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish"
-        payload = {
-            "url": post_url,
-            "type": "URL_UPDATED"
-        }
+        payload = {"url": post_url, "type": "URL_UPDATED"}
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {creds.token}"
         }
-        
         resp = requests.post(endpoint, json=payload, headers=headers, timeout=15)
         if resp.status_code == 200:
             print(f"[INDEXING] ✅ Successfully submitted to Google Indexing API!")
-            print(f"[INDEXING] Response: {resp.text}")
         else:
             print(f"[INDEXING] ❌ Google Indexing API returned status {resp.status_code}: {resp.text}")
-            print("[INDEXING] IMPORTANT SETUP INSTRUCTIONS:")
-            print("1. Ensure the 'Web Search Indexing API' is enabled in your Google Cloud Console.")
-            print("2. Ensure your service account email (or OAuth client email) is added as a 'Delegated Owner'")
-            print("   for the property in Google Search Console under Settings -> Users and Permissions.")
     except Exception as e:
         print(f"[INDEXING] ❌ Exception during indexing submission: {e}")
+
+# ─────────────────────────────────────────────
+# CATEGORY → BLOGGER LABEL MAPPING
+# More descriptive labels improve discoverability on Blogger
+# ─────────────────────────────────────────────
+CATEGORY_LABELS = {
+    "tech": ["Technology", "AI & Innovation", "Trending", "Blog"],
+    "finance": ["Finance & Money", "Wealth Building", "Trending", "Blog"],
+    "lifestyle": ["Beauty & Health Tips", "Wellness", "Trending", "Blog"],
+    "mindset": ["Mindset & Productivity", "Self Improvement", "Trending", "Blog"],
+}
 
 def generate_post(topic_offset=0):
     """Orchestrates dynamic trends research, content writing, ad injection, and Blogger publishing."""
@@ -371,7 +381,6 @@ def generate_post(topic_offset=0):
     # ── Duplicate post guard ──────────────────────────────────────────────────
     if is_duplicate(topic):
         print(f"[DUPLICATE] Skipping '{topic}' — already published. Fetching alternative topic...")
-        # Try up to 5 alternatives from the same feed before giving up
         for _ in range(5):
             trend = trends_researcher.get_trending_topic(category)
             topic = trend["title"]
@@ -384,69 +393,133 @@ def generate_post(topic_offset=0):
             return
     # ─────────────────────────────────────────────────────────────────────────
 
-    # Fetch visual graphic header
-    img_url, alt, credit_name, credit_link = get_image(topic, category)
+    # Fetch visual header image
+    img_url, alt_text, credit_name, credit_link = get_image(topic, category)
 
-    # Build image credit caption
+    # Build image HTML with proper dimensions for Core Web Vitals (no CLS)
     image_html = ""
     if img_url:
+        alt_safe = (alt_text or topic).replace('"', "'")
         if credit_name and credit_link:
-            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:16px; margin-bottom:24px;"/>\n<p style="text-align:center; font-style:italic; font-size:12px; color:var(--text-secondary, #9ea2b6); margin-top:-16px;">Photo by <a href="{credit_link}" target="_blank">{credit_name}</a> on Unsplash</p>\n'
+            image_html = (
+                f'<figure style="margin:0 0 32px 0;">'
+                f'<img src="{img_url}" alt="{alt_safe}" width="1200" height="675" '
+                f'style="width:100%; height:auto; border-radius:16px; display:block;" '
+                f'loading="eager" fetchpriority="high"/>'
+                f'<figcaption style="text-align:center; font-style:italic; font-size:12px; '
+                f'color:var(--text-secondary, #9ea2b6); margin-top:8px;">'
+                f'Photo by <a href="{credit_link}" target="_blank" rel="noopener">{credit_name}</a> on Unsplash'
+                f'</figcaption></figure>\n'
+            )
         else:
-            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:16px; margin-bottom:24px;"/>\n'
+            image_html = (
+                f'<figure style="margin:0 0 32px 0;">'
+                f'<img src="{img_url}" alt="{alt_safe}" width="1200" height="675" '
+                f'style="width:100%; height:auto; border-radius:16px; display:block;" '
+                f'loading="eager" fetchpriority="high"/>'
+                f'</figure>\n'
+            )
 
-    prompt = f"""You are a senior editorial journalist and SEO strategist writing for a high-authority news blog.
-Write a deeply researched, premium long-form article about: "{topic}".
+    # ─────────────────────────────────────────────────────────────────────────
+    # UPGRADED CONTENT PROMPT — E-E-A-T + FAQ + Key Takeaways
+    # ─────────────────────────────────────────────────────────────────────────
+    prompt = f"""You are an award-winning senior journalist and SEO strategist writing for a high-authority editorial news blog with millions of readers.
+
+Write a deeply researched, compelling, premium long-form article about: "{topic}".
 Niche: {category.upper()}. Background context: "{trend_desc}".
 
-━━━ CONTENT QUALITY RULES (E-E-A-T) ━━━
-- Show EXPERIENCE: Open with a concrete real-world scenario, statistic, or expert quote that proves first-hand depth.
-- Show EXPERTISE: Include at least 2 specific data points (percentages, studies, named sources) relevant to "{topic}".
-- Show AUTHORITATIVENESS: Reference at least 1 real company, person, or published study by name.
-- Show TRUSTWORTHINESS: Acknowledge nuance — mention what the trend does NOT solve or its limitations.
+━━━ CONTENT QUALITY RULES (Google E-E-A-T) ━━━
+- EXPERIENCE: Open with one concrete real-world scenario, surprising statistic, or expert quote that immediately proves depth and first-hand knowledge.
+- EXPERTISE: Include at minimum 3 specific data points (exact percentages, named studies, concrete timeframes) highly relevant to "{topic}".
+- AUTHORITATIVENESS: Reference at least 2 real companies, research institutions, or named experts. Be specific — avoid vague references.
+- TRUSTWORTHINESS: Include a nuanced "What to Watch Out For" or "Common Misconceptions" section that shows honest, balanced analysis.
 
-━━━ SEO RULES ━━━
-- Use the exact phrase "{topic}" naturally in: the title, first paragraph, one H2 subheading, and the conclusion.
-- Use LSI keywords naturally (related terms, synonyms — do NOT keyword stuff).
-- Structure: minimum 5 sections using ## H2 and ### H3 headings.
-- Include at least one numbered list AND one bullet-point list.
-- Target 900–1100 words for optimal dwell time.
+━━━ SEO STRUCTURE ━━━
+- Title: Write a title using one of these power formulas:
+  * "[Number] [Power Word] Ways to [Benefit] in [Year]" 
+  * "Why [Topic] Is Changing [Industry] Forever — And What You Should Do Now"
+  * "The Science-Backed Truth About [Topic] (Most People Get This Wrong)"
+- Use the exact phrase "{topic}" in: the title, first paragraph, at least one H2 subheading, and the conclusion.
+- Use LSI/semantic keywords naturally — related phrases, synonyms — do NOT stuff keywords.
+- Include 6-8 sections using ## H2 headings and 2+ ### H3 sub-sections.
+- Include: one numbered list AND one bullet list in the article body.
+- Target length: 1,200–1,600 words for optimal dwell time and ranking.
+
+━━━ SPECIAL SECTIONS (REQUIRED) ━━━
+After the conclusion, add these two mandatory sections:
+
+**KEY TAKEAWAYS** (formatted as 4-5 bullet points prefixed with "✅"):
+A section titled "## Key Takeaways" with concise, scannable action items readers can immediately apply.
+
+**FAQ SECTION** (formatted as ### questions with short paragraph answers):
+A section titled "## Frequently Asked Questions" with exactly 3 relevant questions and answers about "{topic}". These power Google's FAQ rich snippets.
 
 ━━━ FORMATTING ━━━
-- Start with one # Title (make it curiosity-driven and click-worthy — NOT clickbait).
-- End with: [META_DESCRIPTION: a 145–160 character meta description with primary keyword at the start]
+- Start with: # [Your SEO-optimized title]
+- End with: [META_DESCRIPTION: a 145–160 character meta description — put primary keyword first, include a call-to-action word]
 
-Return ONLY the Markdown. No preamble, no sign-offs, no meta-commentary."""
+Return ONLY the Markdown content. No preamble, no sign-offs, no meta-commentary about the article."""
 
     # Generate content using Groq
     if not GROQ_API_KEY:
         print("[AUTOMATION] Warning: GROQ_API_KEY missing. Generating mock SEO post content.")
-        content = f"""# {topic}
+        content = f"""# {topic}: What You Need to Know Right Now
 
-In today's fast-moving world, keeping up with the latest trends in {category} is essential. The rise of "{topic}" is a perfect example of this shift.
+In today's fast-moving world, {topic} is reshaping how professionals in {category} think and operate.
 
-## Key Insights into {topic}
+## Why {topic} Matters More Than Ever
 
 Understanding how these elements interact can reshape your daily routine, finance, or technical workflow.
 
-### Actionable Strategies
-- **Stay Informed:** Keep an eye on daily briefings and updates.
-- **Implement Progressively:** Start with small, manageable adjustments.
+### Key Data Points
+- **78%** of industry leaders report significant impact from this trend
+- Research from Stanford University confirms measurable productivity gains
+- Companies like Google and Microsoft are investing billions in this space
 
-## Practical Steps to Master this Niche
+## Practical Strategies for 2025
 
-By breaking down the challenges, you can build atomic habits that yield exponential returns over time.
+By breaking down the challenges, you can build atomic habits that yield exponential returns.
+
+1. Start with a 30-day commitment
+2. Track progress weekly with measurable metrics
+3. Adjust based on what data tells you
+
+## Common Misconceptions
+
+Many people believe this only applies to large companies — that's false.
+
+## What Experts Are Saying
+
+"This is the most significant shift we've seen in a decade," says Dr. Jane Smith, Harvard Business School.
 
 ## Conclusion
 
-Embracing this development will position you at the forefront of the industry.
+Embracing {topic} will position you at the forefront of the industry.
 
-[META_DESCRIPTION: Learn key insights and actionable strategies to master the latest development in {topic} and optimize your daily workflow.]"""
+## Key Takeaways
+
+✅ Start implementing small changes today
+✅ Track your metrics consistently
+✅ Stay updated with the latest developments
+✅ Connect with communities around {topic}
+
+## Frequently Asked Questions
+
+### What is {topic} and why does it matter?
+{topic} refers to a significant trend in {category} that is changing how people and businesses operate in the modern world.
+
+### How can beginners get started with {topic}?
+Start with free resources online, join relevant communities, and implement one small change per week to build momentum.
+
+### What are the biggest mistakes people make with {topic}?
+The biggest mistake is trying to do everything at once. Start with the highest-impact change and master it before moving on.
+
+[META_DESCRIPTION: Discover the truth about {topic} — expert-backed strategies, real data, and actionable steps to get ahead in {category} today.]"""
     else:
         content = call_groq(prompt)
 
     # Extract Meta Description
-    meta_desc = f"Latest trending update on {topic} inside the {category} niche."
+    meta_desc = f"Discover the latest insights on {topic} — expert analysis, key data, and actionable strategies for {category} success."
     meta_match = re.search(r'\[META_DESCRIPTION:\s*(.+?)\]', content, re.IGNORECASE)
     if meta_match:
         meta_desc = meta_match.group(1).strip()
@@ -461,9 +534,31 @@ Embracing this development will position you at the forefront of the industry.
     body = re.sub(r'^# .+\n', '', content, count=1).strip()
 
     # Convert markdown body to HTML
-    html_content = markdown.markdown(body)
+    html_content = markdown.markdown(body, extensions=['extra', 'nl2br'])
 
-    # Save markdown file to _posts directory for Jekyll compilation
+    # ─────────────────────────────────────────────────────────────────────────
+    # Wrap FAQ section with JSON-LD friendly markup for rich snippets
+    # ─────────────────────────────────────────────────────────────────────────
+    html_content = re.sub(
+        r'<h2[^>]*>Frequently Asked Questions</h2>',
+        '<h2 id="faq-section">Frequently Asked Questions</h2>',
+        html_content, flags=re.IGNORECASE
+    )
+
+    # Style the Key Takeaways box
+    html_content = re.sub(
+        r'<h2[^>]*>Key Takeaways</h2>',
+        '''<h2 id="key-takeaways" style="margin-top:48px;">Key Takeaways</h2>''',
+        html_content, flags=re.IGNORECASE
+    )
+
+    # Add styling to ✅ list items in the key takeaways section
+    html_content = html_content.replace(
+        '<li>✅',
+        '<li style="list-style:none; padding:6px 0; font-weight:500;">✅'
+    )
+
+    # Save markdown file to _posts directory for Jekyll
     posts_dir = os.path.join(os.path.dirname(__file__), "_posts")
     os.makedirs(posts_dir, exist_ok=True)
     
@@ -471,20 +566,25 @@ Embracing this development will position you at the forefront of the industry.
     post_time_str = "07:00:00 +0000" if topic_offset == 0 else "19:00:00 +0000"
     date_str = today.strftime("%Y-%m-%d")
     
-    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:50]
+    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:60]
     filename = f"{date_str}-{offset_prefix}-{slug}.md"
     filepath = os.path.join(posts_dir, filename)
     
     escaped_title = title.replace('"', '\\"')
     escaped_meta_desc = meta_desc.replace('"', '\\"')
     
+    # Get canonical category label for Jekyll
+    primary_label = CATEGORY_LABELS.get(category, ["Blog"])[0]
+    
     front_matter = f"""---
 layout: post
 title: "{escaped_title}"
 date: {date_str} {post_time_str}
-categories: [blog]
+categories: [{category}]
+tags: {json.dumps(CATEGORY_LABELS.get(category, ["Blog"]))}
 description: "{escaped_meta_desc}"
 image: {img_url or ""}
+author: "The Daily Pulse Editorial Team"
 ---
 
 """
@@ -500,17 +600,19 @@ image: {img_url or ""}
     except Exception as e:
         print(f"[ERROR] Failed to save Jekyll markdown post: {e}")
 
-    # Load and inject affiliate offer callout box
+    # ─────────────────────────────────────────────────────────────────────────
+    # Load and inject affiliate offer callout box (after 2nd paragraph)
+    # ─────────────────────────────────────────────────────────────────────────
     offer = load_monetization_offer(category)
     if offer:
         callout_html = f"""
 <div class="editorial-callout" style="padding:24px; background:linear-gradient(135deg, rgba(124,58,237,0.04) 0%, rgba(6,182,212,0.04) 100%); border-left:4px solid #7c3aed; margin:35px 0; border-radius:16px; font-family:'Outfit',sans-serif; box-shadow:0 12px 40px rgba(0,0,0,0.04); border:1px solid rgba(124,58,237,0.1);">
-    <h4 style="margin:0 0 10px 0; color:#7c3aed; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">{offer['callout_title']}</h4>
-    <p style="margin:0 0 16px 0; font-size:14px; line-height:1.6; color:var(--text-secondary, #9ea2b6);">{offer['copywriting']}</p>
-    <a href="{offer['referral_url']}" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:600; font-size:13px; color:#FFFFFF; background:linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); border-radius:9999px; text-decoration:none; box-shadow:0 4px 15px rgba(124,58,237,0.35);">Get instant access &rarr;</a>
+  <h4 style="margin:0 0 10px 0; color:#7c3aed; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">{offer['callout_title']}</h4>
+  <p style="margin:0 0 16px 0; font-size:14px; line-height:1.6; color:var(--text-secondary, #9ea2b6);">{offer['copywriting']}</p>
+  <a href="{offer['referral_url']}" target="_blank" rel="noopener sponsored" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:600; font-size:13px; color:#FFFFFF; background:linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); border-radius:9999px; text-decoration:none; box-shadow:0 4px 15px rgba(124,58,237,0.35);">Get instant access &rarr;</a>
 </div>
 """
-        # Inject after the second paragraph (H1 tag counts as first, or split paragraphs)
+        # Inject after the second paragraph
         paragraphs = html_content.split("</p>")
         if len(paragraphs) > 2:
             paragraphs[1] += "</p>\n" + callout_html
@@ -518,17 +620,58 @@ image: {img_url or ""}
         else:
             html_content += "\n" + callout_html
 
-    # Combine image cover and HTML body
-    final_html = image_html + html_content
+    # ─────────────────────────────────────────────────────────────────────────
+    # Add JSON-LD Article structured data at the top for Google rich results
+    # ─────────────────────────────────────────────────────────────────────────
+    pub_date = today.isoformat() + "T07:00:00Z"
+    img_for_schema = img_url or ""
+    json_ld = f"""<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{title.replace('"', "'")}",
+  "description": "{meta_desc.replace('"', "'")}",
+  "image": {{
+    "@type": "ImageObject",
+    "url": "{img_for_schema}",
+    "width": 1200,
+    "height": 675
+  }},
+  "datePublished": "{pub_date}",
+  "dateModified": "{pub_date}",
+  "author": {{
+    "@type": "Organization",
+    "name": "The Daily Pulse Editorial Team",
+    "url": "https://dailypulsetrends.blogspot.com"
+  }},
+  "publisher": {{
+    "@type": "Organization",
+    "name": "The Daily Pulse",
+    "logo": {{
+      "@type": "ImageObject",
+      "url": "https://dailypulsetrends.blogspot.com/favicon.ico"
+    }}
+  }},
+  "mainEntityOfPage": {{
+    "@type": "WebPage",
+    "@id": "https://dailypulsetrends.blogspot.com/"
+  }}
+}}
+</script>
+"""
+
+    # Combine: JSON-LD schema + hero image + HTML content
+    final_html = json_ld + image_html + html_content
 
     # Deploy to Blogger
     service = get_blogger_service()
     if service and BLOG_ID:
         try:
+            post_labels = CATEGORY_LABELS.get(category, ["Blog", "Trending"])
             post_body = {
                 "title": title,
                 "content": final_html,
-                "labels": [category.title(), "Blog", "Trending"],
+                "labels": post_labels,
             }
             
             result = service.posts().insert(
@@ -552,10 +695,9 @@ image: {img_url or ""}
             print(f"[ERROR] Blogger API publishing failed: {e}")
     else:
         print("[AUTOMATION] Simulated Local Publishing Successful (Blogger Credentials Omitted).")
-        # Save locally to drafts folder for inspection
         drafts_dir = os.path.join(os.path.dirname(__file__), "drafts")
         os.makedirs(drafts_dir, exist_ok=True)
-        slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:50]
+        slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:60]
         draft_path = os.path.join(drafts_dir, f"{slug}.html")
         with open(draft_path, "w", encoding="utf-8") as f:
             f.write(f"<!--\nTitle: {title}\nMeta Description: {meta_desc}\nCategory: {category}\n-->\n" + final_html)
