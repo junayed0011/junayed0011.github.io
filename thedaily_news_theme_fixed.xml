@@ -2495,8 +2495,295 @@ button {
 /* Single Post Reading Page Styles */
 .single-post {
     padding: 10px 0;
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Single post breadcrumb navigation */
+.post-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.post-breadcrumb a {
+    color: var(--accent-brand);
+    transition: opacity 0.2s ease;
+}
+
+.post-breadcrumb a:hover {
+    opacity: 0.75;
+}
+
+.post-breadcrumb .crumb-sep {
+    color: var(--divider);
+}
+
+/* Single post featured image */
+.single-post-image {
+    width: 100%;
+    height: 420px;
+    border-radius: var(--border-radius-lg);
+    object-fit: cover;
+    margin-bottom: 32px;
+    box-shadow: var(--card-shadow);
+    display: block;
+}
+
+/* Post label badges row */
+.post-label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+/* Single post share buttons */
+.post-share-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    border-top: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
+    margin: 32px 0;
+}
+
+.post-share-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    margin-right: 4px;
+}
+
+.post-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--divider);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.post-share-btn:hover {
+    border-color: var(--accent-brand);
+    color: var(--accent-brand);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--accent-brand-rgb), 0.15);
+}
+
+/* Related posts inline section */
+.related-posts-inline {
+    margin-top: 48px;
+    padding-top: 40px;
+    border-top: 2px solid var(--divider);
+}
+
+.related-posts-inline h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.related-post-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--divider);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.related-post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--accent-brand);
+}
+
+.related-post-card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    display: block;
+}
+
+.related-post-card-no-img {
+    width: 100%;
+    height: 130px;
+    background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary));
+    opacity: 0.12;
+}
+
+.related-post-card-body {
+    padding: 14px;
+}
+
+.related-post-card-cat {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent-brand);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.related-post-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* TOC sidebar widget */
+.toc-widget {
+    position: sticky;
+    top: 90px;
+}
+
+.toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 340px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.toc-list li {
+    border-left: 2px solid var(--divider);
+    padding-left: 12px;
+    transition: border-color 0.2s ease;
+}
+
+.toc-list li.toc-active {
+    border-color: var(--accent-brand);
+}
+
+.toc-list a {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+.toc-list li.toc-active a,
+.toc-list a:hover {
+    color: var(--accent-brand);
+}
+
+.toc-list .toc-h3 {
+    padding-left: 20px;
+    font-size: 11px;
+}
+
+.toc-empty {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 16px 0;
+}
+
+/* Related posts sidebar widget */
+.related-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.related-sidebar-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--border-radius-sm);
+    transition: background 0.2s ease;
+}
+
+.related-sidebar-item:hover {
+    background: var(--input-bg);
+}
+
+.related-sidebar-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--border-radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.related-sidebar-thumb-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--border-radius-sm);
+    background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary));
+    flex-shrink: 0;
+    opacity: 0.2;
+}
+
+.related-sidebar-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.related-sidebar-cat {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.related-sidebar-title {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .single-post-image { height: 220px; }
+    .related-posts-grid { grid-template-columns: 1fr; }
+    .post-share-bar { flex-wrap: wrap; gap: 8px; }
 }
 
 .single-post-title {
@@ -3007,18 +3294,67 @@ mark.search-highlight {
                             <!-- Detailed Reading Layout View -->
                             <b:else/>
                                 <b:loop values='data:posts' var='post'>
-                                    <article class='single-post'>
+                                    <article class='single-post' expr:data-labels='data:post.labels ? data:post.labels[0].name : ""'>
+                                        
+                                        <!-- Breadcrumb Navigation -->
+                                        <nav class='post-breadcrumb'>
+                                            <a href='/'>Home</a>
+                                            <span class='crumb-sep'><i class='fa-solid fa-chevron-right' style='font-size:9px;'></i></span>
+                                            <b:if cond='data:post.labels'>
+                                                <b:loop index='i' values='data:post.labels' var='label'>
+                                                    <b:if cond='data:i == 0'>
+                                                        <a expr:href='"/search/label/" + data:label.name'><data:label.name/></a>
+                                                        <span class='crumb-sep'><i class='fa-solid fa-chevron-right' style='font-size:9px;'></i></span>
+                                                    </b:if>
+                                                </b:loop>
+                                            </b:if>
+                                            <span style='color:var(--text-primary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:200px;'><data:post.title/></span>
+                                        </nav>
+                                        
+                                        <!-- Label Badges Row -->
+                                        <b:if cond='data:post.labels'>
+                                            <div class='post-label-row'>
+                                                <b:loop values='data:post.labels' var='label'>
+                                                    <a expr:href='"/search/label/" + data:label.name' class='badge badge-accent' style='font-size:11px;text-decoration:none;'><data:label.name/></a>
+                                                </b:loop>
+                                            </div>
+                                        </b:if>
+                                        
+                                        <!-- Post Title -->
                                         <h1 class='single-post-title'><data:post.title/></h1>
                                         
+                                        <!-- Post Meta -->
                                         <div class='single-post-meta'>
-                                            <span>Written by: <strong><data:post.author.name/></strong></span>
-                                            <span>|</span>
-                                            <span>Published on: <data:post.date/></span>
+                                            <span><i class='fa-regular fa-user'></i> <strong><data:post.author.name/></strong></span>
+                                            <span><i class='fa-regular fa-calendar'></i> <data:post.date/></span>
+                                            <span><i class='fa-regular fa-clock'></i> <span class='js-read-time'>5 min read</span></span>
                                         </div>
                                         
-                                        <div class='post-body'>
+                                        <!-- Featured Image -->
+                                        <b:if cond='data:post.firstImageUrl'>
+                                            <img class='single-post-image' expr:src='data:post.firstImageUrl' expr:alt='data:post.title' loading='eager'/>
+                                        </b:if>
+                                        
+                                        <!-- Post Body Content -->
+                                        <div class='post-body' id='post-body-content'>
                                             <data:post.body/>
                                         </div>
+                                        
+                                        <!-- Share Bar -->
+                                        <div class='post-share-bar'>
+                                            <span class='post-share-label'><i class='fa-solid fa-share-nodes'></i> Share</span>
+                                            <a expr:href='"https://twitter.com/intent/tweet?url=" + data:post.url + "&text=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-x-twitter'></i> Twitter</a>
+                                            <a expr:href='"https://www.facebook.com/sharer/sharer.php?u=" + data:post.url' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-facebook-f'></i> Facebook</a>
+                                            <a expr:href='"https://www.linkedin.com/shareArticle?mini=true&url=" + data:post.url + "&title=" + data:post.title' target='_blank' rel='noopener' class='post-share-btn'><i class='fa-brands fa-linkedin-in'></i> LinkedIn</a>
+                                            <button class='post-share-btn' expr:onclick='"copyShareLink(\&quot;" + data:post.url + "\&quot;, event)"'><i class='fa-solid fa-link'></i> Copy Link</button>
+                                        </div>
+                                        
+                                        <!-- Related Posts (loaded via JS) -->
+                                        <div class='related-posts-inline' id='related-posts-section' style='display:none;'>
+                                            <h3><i class='fa-solid fa-layer-group' style='color:var(--accent-brand);font-size:18px;'></i> You Might Also Like</h3>
+                                            <div class='related-posts-grid' id='related-posts-grid'></div>
+                                        </div>
+                                        
                                     </article>
                                 </b:loop>
                             </b:if>
@@ -3101,6 +3437,30 @@ mark.search-highlight {
                             </b:includable>
                         </b:widget>
                         
+                        <!-- Table of Contents Widget (Single Post Only - JS built) -->
+                        <b:widget id='HTML109' locked='false' title='Table of Contents' type='HTML'>
+                            <b:includable id='main'>
+                                <div class='sidebar-widget toc-widget' id='toc-sidebar-widget' style='display:none;'>
+                                    <div class='widget-header'>
+                                        <h3 class='widget-heading-title'><i class='fa-solid fa-list-ul'></i> Contents</h3>
+                                    </div>
+                                    <ul class='toc-list' id='toc-list-sidebar'></ul>
+                                </div>
+                            </b:includable>
+                        </b:widget>
+                        
+                        <!-- Related Posts Widget (Single Post Only - JS built) -->
+                        <b:widget id='HTML110' locked='false' title='Related Posts' type='HTML'>
+                            <b:includable id='main'>
+                                <div class='sidebar-widget' id='related-posts-sidebar-widget' style='display:none;'>
+                                    <div class='widget-header'>
+                                        <h3 class='widget-heading-title'><i class='fa-solid fa-layer-group'></i> Related Posts</h3>
+                                    </div>
+                                    <div class='related-sidebar-list' id='related-sidebar-list'></div>
+                                </div>
+                            </b:includable>
+                        </b:widget>
+
                         <!-- Trending Now Widget -->
                         <b:widget id='HTML108' locked='false' title='Trending Now' type='HTML'>
                             <b:includable id='main'>
@@ -3451,6 +3811,117 @@ mark.search-highlight {
                 el.textContent = el.textContent.replace(/\*\*/g, "").replace(/\*/g, "").trim();
             }
         });
+
+        // ===== SINGLE POST PAGE ENHANCEMENTS =====
+        const isSinglePost = document.querySelector('.single-post');
+        if (isSinglePost) {
+
+            // 1. Calculate real read time from post body
+            const postBody = document.getElementById('post-body-content');
+            if (postBody) {
+                const wordCount = postBody.innerText.trim().split(/\s+/).length;
+                const readMins = Math.max(2, Math.round(wordCount / 200));
+                const rtEl = document.querySelector('.js-read-time');
+                if (rtEl) rtEl.textContent = readMins + ' min read';
+            }
+
+            // 2. Build Table of Contents from post headings
+            const tocWidget = document.getElementById('toc-sidebar-widget');
+            const tocList = document.getElementById('toc-list-sidebar');
+            if (tocWidget && tocList && postBody) {
+                const headings = postBody.querySelectorAll('h2, h3');
+                if (headings.length >= 2) {
+                    tocWidget.style.display = '';
+                    headings.forEach((h, i) => {
+                        if (!h.id) h.id = 'toc-heading-' + i;
+                        const li = document.createElement('li');
+                        if (h.tagName === 'H3') li.classList.add('toc-h3');
+                        const a = document.createElement('a');
+                        a.href = '#' + h.id;
+                        a.textContent = h.textContent.replace(/\*\*/g, '').replace(/\*/g, '').trim();
+                        li.appendChild(a);
+                        tocList.appendChild(li);
+                    });
+
+                    // Scroll spy — highlight active TOC item
+                    const tocLinks = tocList.querySelectorAll('a');
+                    const observer = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                tocLinks.forEach(a => a.parentElement.classList.remove('toc-active'));
+                                const active = tocList.querySelector('a[href="#' + entry.target.id + '"]');
+                                if (active) active.parentElement.classList.add('toc-active');
+                            }
+                        });
+                    }, { rootMargin: '-20% 0px -70% 0px' });
+                    headings.forEach(h => observer.observe(h));
+                }
+            }
+
+            // 3. Load Related Posts by same label
+            try {
+                const articleEl = document.querySelector('.single-post');
+                const currentLabel = articleEl ? articleEl.dataset.labels : '';
+                const currentUrl = window.location.href;
+                if (currentLabel) {
+                    const feedUrl = '/feeds/posts/default/-/' + encodeURIComponent(currentLabel) + '?alt=json&max-results=5';
+                    const res = await fetch(feedUrl);
+                    const data = await res.json();
+                    const entries = (data.feed.entry || []).filter(e => {
+                        const altLink = e.link ? e.link.find(l => l.rel === 'alternate') : null;
+                        return altLink && altLink.href !== currentUrl;
+                    }).slice(0, 4);
+
+                    if (entries.length >= 2) {
+                        // Sidebar related list
+                        const relSidebarWidget = document.getElementById('related-posts-sidebar-widget');
+                        const relSidebarList = document.getElementById('related-sidebar-list');
+                        if (relSidebarWidget && relSidebarList) {
+                            relSidebarWidget.style.display = '';
+                            relSidebarList.innerHTML = entries.slice(0, 3).map(entry => {
+                                const title = (entry.title.$t || '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+                                const cat = entry.category && entry.category[0] ? entry.category[0].term : currentLabel;
+                                const altLink = entry.link.find(l => l.rel === 'alternate');
+                                const url = altLink ? altLink.href : '#';
+                                const img = entry['media$thumbnail'] ? entry['media$thumbnail'].url.replace('s72-c', 's400-c') : '';
+                                return `
+                                    <div class="related-sidebar-item" onclick="window.location.href='${url}'">
+                                        ${img ? `<img class="related-sidebar-thumb" src="${img}" alt="${title}" loading="lazy" onerror="this.style.display='none'">` : '<div class="related-sidebar-thumb-placeholder"></div>'}
+                                        <div class="related-sidebar-info">
+                                            <span class="related-sidebar-cat">${cat}</span>
+                                            <span class="related-sidebar-title">${title}</span>
+                                        </div>
+                                    </div>`;
+                            }).join('');
+                        }
+
+                        // Inline related posts at bottom of article
+                        const relSection = document.getElementById('related-posts-section');
+                        const relGrid = document.getElementById('related-posts-grid');
+                        if (relSection && relGrid && entries.length) {
+                            relSection.style.display = '';
+                            relGrid.innerHTML = entries.map(entry => {
+                                const title = (entry.title.$t || '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+                                const cat = entry.category && entry.category[0] ? entry.category[0].term : currentLabel;
+                                const altLink = entry.link.find(l => l.rel === 'alternate');
+                                const url = altLink ? altLink.href : '#';
+                                const img = entry['media$thumbnail'] ? entry['media$thumbnail'].url.replace('s72-c', 's400-c') : '';
+                                return `
+                                    <div class="related-post-card" onclick="window.location.href='${url}'">
+                                        ${img ? `<img src="${img}" alt="${title}" loading="lazy" onerror="this.className='related-post-card-no-img'">` : '<div class="related-post-card-no-img"></div>'}
+                                        <div class="related-post-card-body">
+                                            <span class="related-post-card-cat">${cat}</span>
+                                            <span class="related-post-card-title">${title}</span>
+                                        </div>
+                                    </div>`;
+                            }).join('');
+                        }
+                    }
+                }
+            } catch(relErr) {
+                console.warn('[PULSE] Related posts loader failed:', relErr);
+            }
+        }
     });
 
     // Copying Share Link to Clipboard toast control
