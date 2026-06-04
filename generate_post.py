@@ -245,6 +245,84 @@ def get_blogger_service():
 
     return None
 
+def submit_google_indexing(post_url):
+    """Submits the published post URL to the Google Indexing API to request crawling."""
+    if not post_url:
+        return
+    
+    print(f"[INDEXING] Initiating indexing submission for: {post_url}")
+    
+    # We can use the service account if configured
+    service_account_json = None
+    if "BLOGGER_SERVICE_ACCOUNT" in os.environ:
+        try:
+            service_account_json = json.loads(os.environ["BLOGGER_SERVICE_ACCOUNT"])
+        except Exception as e:
+            print(f"[INDEXING] Error parsing service account for indexing: {e}")
+            
+    # Or OAuth credentials
+    client_id = os.environ.get("BLOGGER_CLIENT_ID", "")
+    client_secret = os.environ.get("BLOGGER_CLIENT_SECRET", "")
+    refresh_token = os.environ.get("BLOGGER_REFRESH_TOKEN", "")
+
+    creds = None
+    # 1. Try Service Account
+    if service_account_json:
+        try:
+            creds = service_account.Credentials.from_service_account_info(
+                service_account_json,
+                scopes=["https://www.googleapis.com/auth/indexing"]
+            )
+            print("[INDEXING] Authenticated using Service Account.")
+        except Exception as e:
+            print(f"[INDEXING] Service Account authentication failed: {e}")
+
+    # 2. Try OAuth Refresh Token if Service Account failed or not present
+    if not creds and client_id and client_secret and refresh_token:
+        try:
+            creds = Credentials(
+                token=None,
+                refresh_token=refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=client_id,
+                client_secret=client_secret,
+                scopes=["https://www.googleapis.com/auth/indexing"]
+            )
+            print("[INDEXING] Authenticated using OAuth 2.0 Refresh Token.")
+        except Exception as e:
+            print(f"[INDEXING] OAuth 2.0 credentials loading failed: {e}")
+
+    if not creds:
+        print("[INDEXING] Skipping indexing submission — no credentials available.")
+        return
+
+    try:
+        # Refresh credentials to obtain access token
+        creds.refresh(Request())
+        
+        endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish"
+        payload = {
+            "url": post_url,
+            "type": "URL_UPDATED"
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {creds.token}"
+        }
+        
+        resp = requests.post(endpoint, json=payload, headers=headers, timeout=15)
+        if resp.status_code == 200:
+            print(f"[INDEXING] ✅ Successfully submitted to Google Indexing API!")
+            print(f"[INDEXING] Response: {resp.text}")
+        else:
+            print(f"[INDEXING] ❌ Google Indexing API returned status {resp.status_code}: {resp.text}")
+            print("[INDEXING] IMPORTANT SETUP INSTRUCTIONS:")
+            print("1. Ensure the 'Web Search Indexing API' is enabled in your Google Cloud Console.")
+            print("2. Ensure your service account email (or OAuth client email) is added as a 'Delegated Owner'")
+            print("   for the property in Google Search Console under Settings -> Users and Permissions.")
+    except Exception as e:
+        print(f"[INDEXING] ❌ Exception during indexing submission: {e}")
+
 def generate_post(topic_offset=0):
     """Orchestrates dynamic trends research, content writing, ad injection, and Blogger publishing."""
     categories = ["tech", "finance", "lifestyle", "mindset"]
@@ -353,6 +431,40 @@ Embracing this development will position you at the forefront of the industry.
     # Convert markdown body to HTML
     html_content = markdown.markdown(body)
 
+    # Save markdown file to _posts directory for Jekyll compilation
+    posts_dir = os.path.join(os.path.dirname(__file__), "_posts")
+    os.makedirs(posts_dir, exist_ok=True)
+    
+    offset_prefix = "am" if topic_offset == 0 else "pm"
+    post_time_str = "07:00:00 +0000" if topic_offset == 0 else "19:00:00 +0000"
+    date_str = today.strftime("%Y-%m-%d")
+    
+    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:50]
+    filename = f"{date_str}-{offset_prefix}-{slug}.md"
+    filepath = os.path.join(posts_dir, filename)
+    
+    front_matter = f"""---
+layout: post
+title: "{title.replace('"', '\\"')}"
+date: {date_str} {post_time_str}
+categories: [blog]
+description: "{meta_desc.replace('"', '\\"')}"
+image: {img_url or ""}
+---
+
+"""
+    body_content = ""
+    if img_url:
+        body_content += f"![{title}]({img_url})\n\n"
+    body_content += body
+    
+    try:
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(front_matter + body_content)
+        print(f"[SUCCESS] Jekyll markdown post saved: {filepath}")
+    except Exception as e:
+        print(f"[ERROR] Failed to save Jekyll markdown post: {e}")
+
     # Load and inject affiliate offer callout box
     offer = load_monetization_offer(category)
     if offer:
@@ -399,6 +511,8 @@ Embracing this development will position you at the forefront of the industry.
                 image_url=img_url,
                 category=category
             )
+            # Submit to Google Indexing API
+            submit_google_indexing(post_url)
         except Exception as e:
             print(f"[ERROR] Blogger API publishing failed: {e}")
     else:

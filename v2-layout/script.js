@@ -217,21 +217,38 @@ async function fetchBloggerFeed() {
 
     let feedUrl = "";
     if (BLOGGER_CONFIG.blogId && BLOGGER_CONFIG.blogId !== "YOUR_BLOGGER_BLOG_ID_HERE") {
-        feedUrl = `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json&max-results=30`;
+        feedUrl = `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json-in-script&max-results=30`;
     } else if (BLOGGER_CONFIG.blogUrl) {
         const cleanUrl = BLOGGER_CONFIG.blogUrl.replace(/\/$/, "");
-        feedUrl = `${cleanUrl}/feeds/posts/default?alt=json&max-results=30`;
+        feedUrl = `${cleanUrl}/feeds/posts/default?alt=json-in-script&max-results=30`;
     } else {
         console.warn("⚠️ Google Blogger Blog ID or URL is missing in CONFIG. Falling back to mock data.");
         return;
     }
 
     try {
-        console.log(`🌐 Fetching live feeds from Blogger: ${feedUrl}`);
-        const response = await fetch(feedUrl);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        console.log(`🌐 Fetching live feeds from Blogger (via JSONP): ${feedUrl}`);
         
-        const data = await response.json();
+        // Load Blogger JSON feed using JSONP to bypass CORS restrictions
+        const data = await new Promise((resolve, reject) => {
+            const callbackName = 'blogger_feed_callback_' + Math.floor(Math.random() * 1000000);
+            window[callbackName] = function(json) {
+                delete window[callbackName];
+                document.getElementById(scriptId)?.remove();
+                resolve(json);
+            };
+            const scriptId = 'blogger-jsonp-script';
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = `${feedUrl}&callback=${callbackName}`;
+            script.onerror = (err) => {
+                delete window[callbackName];
+                script.remove();
+                reject(new Error("Failed to load script: " + feedUrl));
+            };
+            document.body.appendChild(script);
+        });
+
         const entries = data.feed.entry || [];
         
         if (entries.length === 0) {
