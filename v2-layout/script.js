@@ -258,7 +258,8 @@ async function fetchBloggerFeed() {
 
         // Map Blogger JSON values into our editorial layout system
         const mappedPosts = entries.map((entry, idx) => {
-            const title = entry.title ? entry.title.$t : "Untitled Article";
+            let title = entry.title ? entry.title.$t : "Untitled Article";
+            title = title.replace(/\*\*/g, "").replace(/\*/g, "").trim();
             const content = entry.content ? entry.content.$t : "";
             
             // Extract the first image src tag inside HTML body using regex
@@ -341,26 +342,26 @@ async function fetchBloggerFeed() {
 // ==========================================================================
 function initTheme() {
     const savedTheme = localStorage.getItem("pulse-theme");
-    const userPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const userPrefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     
-    if (savedTheme === "dark" || (!savedTheme && userPrefersDark)) {
-        bodyEl.classList.add("dark-theme");
-        AppState.theme = "dark";
-    } else {
-        bodyEl.classList.remove("dark-theme");
+    if (savedTheme === "light" || (!savedTheme && userPrefersLight)) {
+        bodyEl.classList.add("light-theme");
         AppState.theme = "light";
+    } else {
+        bodyEl.classList.remove("light-theme");
+        AppState.theme = "dark";
     }
 }
 
 function toggleTheme() {
-    if (bodyEl.classList.contains("dark-theme")) {
-        bodyEl.classList.remove("dark-theme");
-        localStorage.setItem("pulse-theme", "light");
-        AppState.theme = "light";
-    } else {
-        bodyEl.classList.add("dark-theme");
+    if (bodyEl.classList.contains("light-theme")) {
+        bodyEl.classList.remove("light-theme");
         localStorage.setItem("pulse-theme", "dark");
         AppState.theme = "dark";
+    } else {
+        bodyEl.classList.add("light-theme");
+        localStorage.setItem("pulse-theme", "light");
+        AppState.theme = "light";
     }
 }
 
@@ -760,6 +761,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             }, 1000);
         } else {
             alert("Please supply a genuine email address.");
+        }
+    });
+
+    // Clean markdown bold symbols from all titles on the page
+    document.querySelectorAll('.featured-title, .sub-card-title, .card-headline, .single-post-title, title, .reading-modal-title, .rank-title, .ticker-item').forEach(el => {
+        if (el.textContent.includes('*')) {
+            el.textContent = el.textContent.replace(/\*\*/g, "").replace(/\*/g, "").trim();
         }
     });
 });

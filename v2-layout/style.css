@@ -17,7 +17,7 @@
 
 :root {
     /* Fonts Families */
-    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-heading: 'Outfit', 'Inter', sans-serif;
     --font-body: 'Outfit', 'Inter', sans-serif;
 
     /* Theme Transition Duration */
@@ -25,46 +25,46 @@
     
     /* Layout Constants */
     --container-max-width: 1200px;
-    --border-radius-sm: 4px;
-    --border-radius-md: 10px;
-    --border-radius-lg: 18px;
-    --border-radius-xl: 30px;
+    --border-radius-sm: 6px;
+    --border-radius-md: 9999px; /* Capsule pill inputs/buttons */
+    --border-radius-lg: 24px;   /* Premium rounded cards */
+    --border-radius-xl: 9999px; /* Capsule pills */
 
-    /* LIGHT MODE PALETTE (Alabaster / Ivory Base) */
-    --bg-primary: #FAF9F6;
-    --bg-surface: #FFFFFF;
-    --text-primary: #111111;
-    --text-secondary: #5A5E6F;
-    --accent-brand: #C8102E; /* Crimson Editorial Red */
-    --accent-brand-rgb: 200, 16, 46;
-    --accent-secondary: #0F172A;
-    --divider: #EAE8E2;
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-    --card-shadow-hover: 0 20px 40px rgba(200, 16, 46, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
-    --glass-bg: rgba(255, 255, 255, 0.8);
-    --glass-border: rgba(234, 232, 226, 0.7);
-    --input-bg: #F3F1EC;
-    --ad-border: rgba(200, 16, 46, 0.15);
-    --ad-bg: rgba(255, 255, 255, 0.9);
+    /* STITCH DEFAULT DARK THEME PALETTE */
+    --bg-primary: #03040b;
+    --bg-surface: #0a0c16;
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --accent-brand: #7c3aed; /* Neon Purple */
+    --accent-brand-rgb: 124, 58, 237;
+    --accent-secondary: #06b6d4; /* Neon Cyan */
+    --divider: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    --card-shadow-hover: 0 24px 50px rgba(124, 58, 237, 0.22);
+    --glass-bg: rgba(10, 12, 22, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --input-bg: rgba(255, 255, 255, 0.03);
+    --ad-border: rgba(124, 58, 237, 0.15);
+    --ad-bg: rgba(10, 12, 22, 0.95);
 }
 
-.dark-theme {
-    /* DARK MODE PALETTE (Obsidian Base) */
-    --bg-primary: #0A0B0E;
-    --bg-surface: #12141C;
-    --text-primary: #F3F4F6;
-    --text-secondary: #9EA2B6;
-    --accent-brand: #FF3366; /* Electric Coral / Crimson Neon */
-    --accent-brand-rgb: 255, 51, 102;
-    --accent-secondary: #1F2937;
-    --divider: #1E2235;
-    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-    --card-shadow-hover: 0 24px 50px rgba(255, 51, 102, 0.18);
-    --glass-bg: rgba(18, 20, 28, 0.85);
-    --glass-border: rgba(30, 34, 53, 0.7);
-    --input-bg: #1B1D2A;
-    --ad-border: rgba(255, 51, 102, 0.22);
-    --ad-bg: rgba(18, 20, 28, 0.95);
+.light-theme {
+    /* STITCH LIGHT MODE PALETTE */
+    --bg-primary: #fafafa;
+    --bg-surface: #ffffff;
+    --text-primary: #09090b;
+    --text-secondary: #71717a;
+    --accent-brand: #7c3aed;
+    --accent-brand-rgb: 124, 58, 237;
+    --accent-secondary: #0891b2;
+    --divider: rgba(9, 9, 11, 0.08);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --card-shadow-hover: 0 20px 40px rgba(124, 58, 237, 0.12), 0 2px 4px rgba(0, 0, 0, 0.02);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(9, 9, 11, 0.06);
+    --input-bg: #f4f4f5;
+    --ad-border: rgba(124, 58, 237, 0.08);
+    --ad-bg: rgba(255, 255, 255, 0.98);
 }
 
 /* Smooth Scrolling Offset */
@@ -75,12 +75,41 @@ html {
 
 body {
     background-color: var(--bg-primary);
+    background-image: radial-gradient(var(--divider) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     overflow-x: hidden !important;
     transition: background-color var(--theme-transition), color var(--theme-transition);
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+    z-index: -2;
+    pointer-events: none;
+    filter: blur(80px);
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+    z-index: -2;
+    pointer-events: none;
+    filter: blur(80px);
 }
 
 /* Core Container Utilities */
@@ -332,15 +361,15 @@ button {
     gap: 20px;
 }
 
-/* Premium Slider Theme Toggle */
+/* Premium Slider Theme Toggle (Default Dark Mode) */
 .theme-toggle {
     width: 58px;
     height: 30px;
-    background: linear-gradient(135deg, #FF9F0A 0%, #FF3B30 100%);
+    background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
     border-radius: 30px;
     position: relative;
     padding: 3px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(255, 159, 10, 0.2);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 10px rgba(79, 70, 229, 0.25);
     z-index: 1;
     overflow: hidden;
 }
@@ -352,18 +381,18 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
+    background: linear-gradient(135deg, #FF9F0A 0%, #FF3B30 100%);
     opacity: 0;
     transition: opacity var(--theme-transition);
     z-index: -1;
 }
 
-.dark-theme .theme-toggle::before {
+.light-theme .theme-toggle::before {
     opacity: 1;
 }
 
-.dark-theme .theme-toggle {
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 10px rgba(79, 70, 229, 0.25);
+.light-theme .theme-toggle {
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(255, 159, 10, 0.2);
 }
 
 .toggle-track {
@@ -390,7 +419,7 @@ button {
     z-index: 3;
 }
 
-.dark-theme .toggle-thumb {
+.light-theme .toggle-thumb {
     transform: translateX(28px);
 }
 
@@ -402,23 +431,24 @@ button {
 
 .icon-sun {
     color: #FFB800;
-    opacity: 1;
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .icon-moon {
     color: #A5B4FC;
-    opacity: 0;
-    transform: scale(0.5);
-}
-
-.dark-theme .icon-sun {
-    opacity: 0;
-    transform: scale(0.5);
-}
-
-.dark-theme .icon-moon {
     opacity: 1;
     transform: scale(1);
+}
+
+.light-theme .icon-sun {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.light-theme .icon-moon {
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 /* Burger Mobile Menu Menu Toggle */
@@ -610,6 +640,152 @@ button {
     color: var(--text-secondary);
 }
 
+/* Premium Affiliate Promo Styles */
+.ad-promo-link {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.promo-leaderboard-card, .promo-mid-feed-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--border-radius-md);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.promo-leaderboard-card:hover, .promo-mid-feed-card:hover, .promo-skyscraper-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--accent-brand-rgb), 0.4) !important;
+    box-shadow: 0 10px 30px rgba(var(--accent-brand-rgb), 0.1);
+}
+
+.promo-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.promo-tag {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-brand);
+    background: rgba(var(--accent-brand-rgb), 0.1);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    white-space: nowrap;
+    border: 1px solid rgba(var(--accent-brand-rgb), 0.15);
+}
+
+.promo-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.promo-text-group .ad-dimensions {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.promo-text-group .ad-subtext {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.btn-promo-cta {
+    background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 12px rgba(var(--accent-brand-rgb), 0.25);
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.ad-promo-link:hover .btn-promo-cta {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(var(--accent-brand-rgb), 0.4);
+}
+
+/* Skyscraper vertical promo style */
+.promo-skyscraper-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--border-radius-lg);
+    padding: 40px 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 480px;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.promo-content-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.promo-vertical-title {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 10px 0 0 0;
+}
+
+.promo-vertical-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.promo-cta-button-wrap {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.promo-cta-button-wrap .btn-promo-cta {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
 /* Leaderboard Specific layout size */
 .ad-leaderboard-wrap .ad-placeholder-graphic {
     min-height: 98px;
@@ -632,6 +808,7 @@ button {
 .ad-skyscraper-wrap .ad-placeholder-graphic {
     min-height: 480px;
 }
+
 
 /* ==========================================================================
    5. Hero Section (Visual Grid Layout)
@@ -805,16 +982,16 @@ button {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-brand) 0%, #FF5E62 100%);
+    background: linear-gradient(135deg, var(--accent-brand) 0%, var(--accent-secondary) 100%);
     color: #FFFFFF;
-    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.35);
+    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.25);
     border: none;
 }
 
 .btn-primary:hover {
     color: #FFFFFF;
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(var(--accent-brand-rgb), 0.5);
+    box-shadow: 0 10px 25px rgba(var(--accent-brand-rgb), 0.45);
 }
 
 /* Stripe-Style Metallic Shimmer Swipe Effect */
@@ -1431,12 +1608,12 @@ button {
 .btn-submit-glow {
     width: 100%;
     height: 46px;
-    background-color: var(--accent-brand);
+    background: linear-gradient(135deg, var(--accent-brand) 0%, var(--accent-secondary) 100%);
     color: #FFFFFF;
     font-weight: 600;
     font-size: 13px;
     border-radius: var(--border-radius-md);
-    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.3);
+    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.25);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -1447,7 +1624,7 @@ button {
 
 .btn-submit-glow:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(var(--accent-brand-rgb), 0.45);
+    box-shadow: 0 8px 20px rgba(var(--accent-brand-rgb), 0.4);
 }
 
 .btn-submit-glow:active {
@@ -2020,6 +2197,26 @@ button {
         align-items: center;
         justify-content: center;
         gap: 6px;
+    }
+
+    /* Responsive adjustment for Leaderboard/Mid-Feed promo cards on mobile */
+    .promo-leaderboard-card, .promo-mid-feed-card {
+        padding: 16px;
+    }
+    
+    .promo-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .promo-text-group {
+        width: 100%;
+    }
+    
+    .btn-promo-cta {
+        width: 100%;
+        text-align: center;
     }
 }
 

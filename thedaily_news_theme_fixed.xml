@@ -18,9 +18,9 @@
     <script type='text/javascript'>
         (function() {
             const savedTheme = localStorage.getItem('pulse-theme');
-            const userPrefersDark = window.matchMedia &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (savedTheme === 'dark' || (!savedTheme &amp;&amp; userPrefersDark)) {
-                document.documentElement.classList.add('dark-theme');
+            const userPrefersLight = window.matchMedia &amp;&amp; window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (savedTheme === 'light' || (!savedTheme &amp;&amp; userPrefersLight)) {
+                document.documentElement.classList.add('light-theme');
             }
         })();
     </script>
@@ -44,8 +44,8 @@
 }
 
 :root {
-    /* Font Families */
-    --font-heading: 'Playfair Display', Georgia, serif;
+    /* Font Families - modernized to match Stitch */
+    --font-heading: 'Outfit', 'Inter', sans-serif;
     --font-body: 'Outfit', 'Inter', sans-serif;
 
     /* Theme Transition Duration */
@@ -53,46 +53,46 @@
     
     /* Layout Constants */
     --container-max-width: 1200px;
-    --border-radius-sm: 4px;
-    --border-radius-md: 10px;
-    --border-radius-lg: 18px;
-    --border-radius-xl: 30px;
+    --border-radius-sm: 6px;
+    --border-radius-md: 9999px; /* Capsule pill inputs/buttons */
+    --border-radius-lg: 24px;   /* Premium rounded cards */
+    --border-radius-xl: 9999px; /* Capsule pills */
 
-    /* LIGHT MODE PALETTE (Alabaster / Ivory Base) */
-    --bg-primary: #FAF9F6;
-    --bg-surface: #FFFFFF;
-    --text-primary: #111111;
-    --text-secondary: #5A5E6F;
-    --accent-brand: #C8102E; /* Crimson Editorial Red */
-    --accent-brand-rgb: 200, 16, 46;
-    --accent-secondary: #0F172A;
-    --divider: #EAE8E2;
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-    --card-shadow-hover: 0 20px 40px rgba(200, 16, 46, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
-    --glass-bg: rgba(255, 255, 255, 0.8);
-    --glass-border: rgba(234, 232, 226, 0.7);
-    --input-bg: #F3F1EC;
-    --ad-border: rgba(200, 16, 46, 0.15);
-    --ad-bg: rgba(255, 255, 255, 0.9);
+    /* STITCH DEFAULT DARK THEME PALETTE */
+    --bg-primary: #03040b;
+    --bg-surface: #0a0c16;
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --accent-brand: #7c3aed; /* Neon Purple */
+    --accent-brand-rgb: 124, 58, 237;
+    --accent-secondary: #06b6d4; /* Neon Cyan */
+    --divider: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    --card-shadow-hover: 0 24px 50px rgba(124, 58, 237, 0.22);
+    --glass-bg: rgba(10, 12, 22, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --input-bg: rgba(255, 255, 255, 0.03);
+    --ad-border: rgba(124, 58, 237, 0.15);
+    --ad-bg: rgba(10, 12, 22, 0.95);
 }
 
-.dark-theme {
-    /* DARK MODE PALETTE (Obsidian Base) */
-    --bg-primary: #0A0B0E;
-    --bg-surface: #12141C;
-    --text-primary: #F3F4F6;
-    --text-secondary: #9EA2B6;
-    --accent-brand: #FF3366; /* Electric Coral / Crimson Neon */
-    --accent-brand-rgb: 255, 51, 102;
-    --accent-secondary: #1F2937;
-    --divider: #1E2235;
-    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-    --card-shadow-hover: 0 24px 50px rgba(255, 51, 102, 0.18);
-    --glass-bg: rgba(18, 20, 28, 0.85);
-    --glass-border: rgba(30, 34, 53, 0.7);
-    --input-bg: #1B1D2A;
-    --ad-border: rgba(255, 51, 102, 0.22);
-    --ad-bg: rgba(18, 20, 28, 0.95);
+.light-theme {
+    /* STITCH LIGHT MODE PALETTE */
+    --bg-primary: #fafafa;
+    --bg-surface: #ffffff;
+    --text-primary: #09090b;
+    --text-secondary: #71717a;
+    --accent-brand: #7c3aed;
+    --accent-brand-rgb: 124, 58, 237;
+    --accent-secondary: #0891b2;
+    --divider: rgba(9, 9, 11, 0.08);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --card-shadow-hover: 0 20px 40px rgba(124, 58, 237, 0.12), 0 2px 4px rgba(0, 0, 0, 0.02);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(9, 9, 11, 0.06);
+    --input-bg: #f4f4f5;
+    --ad-border: rgba(124, 58, 237, 0.08);
+    --ad-bg: rgba(255, 255, 255, 0.98);
 }
 
 html {
@@ -102,13 +102,41 @@ html {
 
 body {
     background-color: var(--bg-primary) !important;
-    background-image: none !important;
+    background-image: radial-gradient(var(--divider) 1.2px, transparent 1.2px) !important;
+    background-size: 24px 24px !important;
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     overflow-x: hidden !important;
     transition: background-color var(--theme-transition), color var(--theme-transition);
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -150px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+    z-index: -2;
+    pointer-events: none;
+    filter: blur(80px);
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+    z-index: -2;
+    pointer-events: none;
+    filter: blur(80px);
 }
 
 .container {
@@ -401,15 +429,15 @@ button {
     gap: 20px;
 }
 
-/* Premium Slider Theme Toggle */
+/* Premium Slider Theme Toggle (Default Dark Mode) */
 .theme-toggle {
     width: 58px;
     height: 30px;
-    background: linear-gradient(135deg, #FF9F0A 0%, #FF3B30 100%);
+    background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
     border-radius: 30px;
     position: relative;
     padding: 3px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(255, 159, 10, 0.2);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 10px rgba(79, 70, 229, 0.25);
     z-index: 1;
     overflow: hidden;
 }
@@ -421,18 +449,18 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
+    background: linear-gradient(135deg, #FF9F0A 0%, #FF3B30 100%);
     opacity: 0;
     transition: opacity var(--theme-transition);
     z-index: -1;
 }
 
-.dark-theme .theme-toggle::before {
+.light-theme .theme-toggle::before {
     opacity: 1;
 }
 
-.dark-theme .theme-toggle {
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 10px rgba(79, 70, 229, 0.25);
+.light-theme .theme-toggle {
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(255, 159, 10, 0.2);
 }
 
 .toggle-track {
@@ -459,7 +487,7 @@ button {
     z-index: 3;
 }
 
-.dark-theme .toggle-thumb {
+.light-theme .toggle-thumb {
     transform: translateX(28px);
 }
 
@@ -471,23 +499,24 @@ button {
 
 .icon-sun {
     color: #FFB800;
-    opacity: 1;
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .icon-moon {
     color: #A5B4FC;
-    opacity: 0;
-    transform: scale(0.5);
-}
-
-.dark-theme .icon-sun {
-    opacity: 0;
-    transform: scale(0.5);
-}
-
-.dark-theme .icon-moon {
     opacity: 1;
     transform: scale(1);
+}
+
+.light-theme .icon-sun {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.light-theme .icon-moon {
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 /* Burger Mobile Menu Toggle */
@@ -696,9 +725,155 @@ button {
     color: var(--text-secondary);
 }
 
+/* Premium Affiliate Promo Styles */
+.ad-promo-link {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.promo-leaderboard-card, .promo-mid-feed-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--border-radius-md);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.promo-leaderboard-card:hover, .promo-mid-feed-card:hover, .promo-skyscraper-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--accent-brand-rgb), 0.4) !important;
+    box-shadow: 0 10px 30px rgba(var(--accent-brand-rgb), 0.1);
+}
+
+.promo-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.promo-tag {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-brand);
+    background: rgba(var(--accent-brand-rgb), 0.1);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    white-space: nowrap;
+    border: 1px solid rgba(var(--accent-brand-rgb), 0.15);
+}
+
+.promo-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.promo-text-group .ad-dimensions {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.promo-text-group .ad-subtext {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.btn-promo-cta {
+    background: linear-gradient(135deg, var(--accent-brand), var(--accent-secondary)) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 12px rgba(var(--accent-brand-rgb), 0.25);
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.ad-promo-link:hover .btn-promo-cta {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(var(--accent-brand-rgb), 0.4);
+}
+
+/* Skyscraper vertical promo style */
+.promo-skyscraper-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--border-radius-lg);
+    padding: 40px 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 480px;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.promo-content-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.promo-vertical-title {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 10px 0 0 0;
+}
+
+.promo-vertical-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.promo-cta-button-wrap {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.promo-cta-button-wrap .btn-promo-cta {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
 /* Leaderboard Specific layout size */
 .ad-leaderboard-wrap .ad-placeholder-graphic {
-    min-height: 72px;
+    min-height: 98px;
 }
 
 /* In-Feed Banner layout size */
@@ -894,16 +1069,16 @@ button {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-brand) 0%, #FF5E62 100%);
+    background: linear-gradient(135deg, var(--accent-brand) 0%, var(--accent-secondary) 100%);
     color: #FFFFFF;
-    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.35);
+    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.25);
     border: none;
 }
 
 .btn-primary:hover {
     color: #FFFFFF;
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(var(--accent-brand-rgb), 0.5);
+    box-shadow: 0 10px 25px rgba(var(--accent-brand-rgb), 0.45);
 }
 
 /* Stripe-Style Metallic Shimmer Swipe Effect */
@@ -1523,12 +1698,12 @@ button {
 .btn-submit-glow {
     width: 100%;
     height: 46px;
-    background-color: var(--accent-brand);
+    background: linear-gradient(135deg, var(--accent-brand) 0%, var(--accent-secondary) 100%);
     color: #FFFFFF;
     font-weight: 600;
     font-size: 13px;
     border-radius: var(--border-radius-md);
-    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.3);
+    box-shadow: 0 4px 15px rgba(var(--accent-brand-rgb), 0.25);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -1539,7 +1714,7 @@ button {
 
 .btn-submit-glow:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(var(--accent-brand-rgb), 0.45);
+    box-shadow: 0 8px 20px rgba(var(--accent-brand-rgb), 0.4);
 }
 
 .btn-submit-glow:active {
@@ -2113,6 +2288,26 @@ button {
         justify-content: center;
         gap: 6px;
     }
+
+    /* Responsive adjustment for Leaderboard/Mid-Feed promo cards on mobile */
+    .promo-leaderboard-card, .promo-mid-feed-card {
+        padding: 16px;
+    }
+    
+    .promo-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .promo-text-group {
+        width: 100%;
+    }
+    
+    .btn-promo-cta {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 /* Small phone view (480px max) */
@@ -2606,14 +2801,20 @@ mark.search-highlight {
                         <b:if cond='data:content'>
                             <data:content/>
                         <b:else/>
-                            <div class='ad-label'>Sponsored Advertisement</div>
-                            <div class='ad-placeholder-graphic'>
-                                <div class='ad-glow'></div>
-                                <div class='ad-info-text'>
-                                    <span class='ad-dimensions'>970 x 90 px Leaderboard Ad</span>
-                                    <span class='ad-subtext'>Premium Programmatic Header Placement</span>
+                            <div class='ad-label'>Featured Partner Offer</div>
+                            <a href='https://www.amazon.com/dp/B09HM94VDS/?tag=dailypulsetre-20' target='_blank' rel='noopener' class='ad-promo-link'>
+                                <div class='ad-placeholder-graphic promo-leaderboard-card'>
+                                    <div class='ad-glow'></div>
+                                    <div class='promo-content'>
+                                        <span class='promo-tag'>Setup Upgrade</span>
+                                        <div class='promo-text-group'>
+                                            <span class='ad-dimensions'>Logitech MX Master 3S Wireless Ergonomic Mouse</span>
+                                            <span class='ad-subtext'>Optimize your programming workflow, eliminate wrist fatigue, and boost speed.</span>
+                                        </div>
+                                        <div class='btn btn-secondary btn-promo-cta'>Upgrade Setup <i class='fa-solid fa-arrow-right'></i></div>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </b:if>
                     </b:includable>
                 </b:widget>
@@ -2669,7 +2870,7 @@ mark.search-highlight {
                                                         </span>
                                                         <div class='meta-row'>
                                                             <span class='meta-item'><i class='fa-regular fa-clock'></i> 5 min read</span>
-                                                            <span class='meta-item'><i class='fa-regular fa-calendar'></i> <data:post.dateHeader/></span>
+                                                            <span class='meta-item'><i class='fa-regular fa-calendar'></i> <data:post.date/></span>
                                                         </div>
                                                         <h1 class='featured-title'><a expr:href='data:post.url' style='color:#FFFFFF;'><data:post.title/></a></h1>
                                                         <p class='featured-excerpt'>
@@ -2777,9 +2978,9 @@ mark.search-highlight {
                                                 </a>
                                                 <div class='card-body'>
                                                     <div class='card-meta'>
-                                                        <span class='card-author'><data:post.author/></span>
+                                                        <span class='card-author'><data:post.author.name/></span>
                                                         <span class='card-meta-dot'></span>
-                                                        <span class='card-date'><data:post.dateHeader/></span>
+                                                        <span class='card-date'><data:post.date/></span>
                                                     </div>
                                                     <h3 class='card-headline'>
                                                         <a expr:href='data:post.url'><data:post.title/></a>
@@ -2810,9 +3011,9 @@ mark.search-highlight {
                                         <h1 class='single-post-title'><data:post.title/></h1>
                                         
                                         <div class='single-post-meta'>
-                                            <span>Written by: <strong><data:post.author/></strong></span>
+                                            <span>Written by: <strong><data:post.author.name/></strong></span>
                                             <span>|</span>
-                                            <span>Published on: <data:post.dateHeader/></span>
+                                            <span>Published on: <data:post.date/></span>
                                         </div>
                                         
                                         <div class='post-body'>
@@ -2851,14 +3052,20 @@ mark.search-highlight {
                                 <b:if cond='data:content'>
                                     <data:content/>
                                 <b:else/>
-                                    <div class='ad-label'>Sponsored Advertisement</div>
-                                    <div class='ad-placeholder-graphic'>
-                                        <div class='ad-glow'></div>
-                                        <div class='ad-info-text'>
-                                            <span class='ad-dimensions'>728 x 90 px Mid-Feed Banner Ad</span>
-                                            <span class='ad-subtext'>Highly Engaging Contextual Placement</span>
+                                    <div class='ad-label'>Peak Performance Reading</div>
+                                    <a href='https://www.amazon.com/dp/0735211299/?tag=dailypulsetre-20' target='_blank' rel='noopener' class='ad-promo-link'>
+                                        <div class='ad-placeholder-graphic promo-mid-feed-card'>
+                                            <div class='ad-glow'></div>
+                                            <div class='promo-content'>
+                                                <span class='promo-tag'>Daily Habits</span>
+                                                <div class='promo-text-group'>
+                                                    <span class='ad-dimensions'>Atomic Habits by James Clear</span>
+                                                    <span class='ad-subtext'>Stop procrastinating and start building systems that guarantee daily progress.</span>
+                                                </div>
+                                                <div class='btn btn-secondary btn-promo-cta'>Get Best Seller <i class='fa-solid fa-arrow-right'></i></div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </b:if>
                             </b:includable>
                         </b:widget>
@@ -2894,6 +3101,20 @@ mark.search-highlight {
                             </b:includable>
                         </b:widget>
                         
+                        <!-- Trending Now Widget -->
+                        <b:widget id='HTML108' locked='false' title='Trending Now' type='HTML'>
+                            <b:includable id='main'>
+                                <div class='sidebar-widget trending-list-widget'>
+                                    <div class='widget-header'>
+                                        <h3 class='widget-heading-title'><i class='fa-solid fa-arrow-trend-up'></i> Trending Now</h3>
+                                    </div>
+                                    <div class='trending-rank-list' id='trending-posts-sidebar-list'>
+                                        <!-- Dynamic Rank Items Injected via JS -->
+                                    </div>
+                                </div>
+                            </b:includable>
+                        </b:widget>
+                        
                     </b:section>
                     
                     <!-- MONETIZATION: Sticky Skyscraper Ad Placeholder -->
@@ -2904,14 +3125,20 @@ mark.search-highlight {
                                     <b:if cond='data:content'>
                                         <data:content/>
                                     <b:else/>
-                                        <div class='ad-label'>Sponsored Advertisement</div>
-                                        <div class='ad-placeholder-graphic'>
-                                            <div class='ad-glow'></div>
-                                            <div class='ad-info-text'>
-                                                <span class='ad-dimensions'>300 x 600 px Skyscraper Ad</span>
-                                                <span class='ad-subtext'>Premium High-Impact Visual Banner</span>
+                                        <div class='ad-label'>Sponsor Highlight</div>
+                                        <a href='https://www.amazon.com/dp/0857197681/?tag=dailypulsetre-20' target='_blank' rel='noopener' class='ad-promo-link'>
+                                            <div class='ad-placeholder-graphic promo-skyscraper-card'>
+                                                <div class='ad-glow'></div>
+                                                <div class='promo-content-vertical'>
+                                                    <span class='promo-tag'>Essential Wealth Guide</span>
+                                                    <h4 class='promo-vertical-title'>The Psychology of Money</h4>
+                                                    <p class='promo-vertical-desc'>Morgan Housel shares 19 short stories exploring the strange ways people think about wealth, greed, and happiness.</p>
+                                                    <div class='promo-cta-button-wrap'>
+                                                        <div class='btn btn-secondary btn-promo-cta'>Get Your Copy <i class='fa-solid fa-arrow-right'></i></div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </b:if>
                                 </b:includable>
                             </b:widget>
@@ -3006,12 +3233,12 @@ mark.search-highlight {
         // Theme Toggle control
         if (themeBtn) {
             themeBtn.addEventListener("click", () => {
-                if (bodyEl.classList.contains("dark-theme")) {
-                    bodyEl.classList.remove("dark-theme");
-                    localStorage.setItem("pulse-theme", "light");
-                } else {
-                    bodyEl.classList.add("dark-theme");
+                if (bodyEl.classList.contains("light-theme")) {
+                    bodyEl.classList.remove("light-theme");
                     localStorage.setItem("pulse-theme", "dark");
+                } else {
+                    bodyEl.classList.add("light-theme");
+                    localStorage.setItem("pulse-theme", "light");
                 }
             });
         }
@@ -3150,6 +3377,55 @@ mark.search-highlight {
 
         // Initialize secure parser
         loadExternalThumbnails();
+        loadTrendingPosts();
+
+        // Dynamic trending widget content loader
+        async function loadTrendingPosts() {
+            const trendingContainer = document.getElementById("trending-posts-sidebar-list");
+            if (!trendingContainer) return;
+            try {
+                const response = await fetch('/feeds/posts/default?alt=json&max-results=10');
+                if (!response.ok) return;
+                const data = await response.json();
+                const entries = data.feed.entry || [];
+                
+                let trendingEntries = entries.filter(entry => {
+                    const categories = entry.category || [];
+                    return categories.some(cat => cat.term.toLowerCase() === 'trending');
+                });
+                
+                if (trendingEntries.length === 0) {
+                    trendingEntries = entries.slice(0, 5);
+                } else {
+                    trendingEntries = trendingEntries.slice(0, 5);
+                }
+                
+                trendingContainer.innerHTML = trendingEntries.map((entry, idx) => {
+                    const title = (entry.title ? entry.title.$t : "Untitled").replace(/\*\*/g, "").replace(/\*/g, "").trim();
+                    const category = entry.category && entry.category[0] ? entry.category[0].term : "Insights";
+                    
+                    const content = entry.content ? entry.content.$t : (entry.summary ? entry.summary.$t : "");
+                    const cleanText = content.replace(/<[^>]*>/g, "");
+                    const wordsCount = cleanText.split(/\s+/).length;
+                    const readTimeVal = Math.max(2, Math.round(wordsCount / 200)) + " min read";
+                    
+                    const altLink = entry.link ? entry.link.find(l => l.rel === "alternate") : null;
+                    const postUrl = altLink ? altLink.href : "#";
+                    
+                    return `
+                        <div class="trending-rank-item" onclick="window.location.href='${postUrl}'" style="cursor: pointer;">
+                            <span class="rank-number">0${idx + 1}</span>
+                            <div class="rank-text-wrap">
+                                <span class="rank-meta">${category} &middot; ${readTimeVal}</span>
+                                <h4 class="rank-title">${title}</h4>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            } catch (err) {
+                console.warn('[PULSE] Trending list loader failed:', err);
+            }
+        }
 
         // Dynamic Active Navigation Link Highlighter
         const currentPath = window.location.pathname.replace(/\/$/, "");
@@ -3167,6 +3443,13 @@ mark.search-highlight {
                     link.classList.remove('active');
                 }
             } catch (e) {}
+        });
+
+        // Clean markdown bold symbols from all titles on the page
+        document.querySelectorAll('.featured-title a, .sub-card-title a, .card-headline a, .single-post-title, title, .rank-title, .ticker-item').forEach(el => {
+            if (el.textContent.includes('*')) {
+                el.textContent = el.textContent.replace(/\*\*/g, "").replace(/\*/g, "").trim();
+            }
         });
     });
 

@@ -391,9 +391,9 @@ def generate_post(topic_offset=0):
     image_html = ""
     if img_url:
         if credit_name and credit_link:
-            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:12px; margin-bottom:24px;"/>\n<p style="text-align:center; font-style:italic; font-size:12px; color:#5A5E6F; margin-top:-16px;">Photo by <a href="{credit_link}" target="_blank">{credit_name}</a> on Unsplash</p>\n'
+            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:16px; margin-bottom:24px;"/>\n<p style="text-align:center; font-style:italic; font-size:12px; color:var(--text-secondary, #9ea2b6); margin-top:-16px;">Photo by <a href="{credit_link}" target="_blank">{credit_name}</a> on Unsplash</p>\n'
         else:
-            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:12px; margin-bottom:24px;"/>\n'
+            image_html = f'<img src="{img_url}" alt="{alt}" style="width:100%; border-radius:16px; margin-bottom:24px;"/>\n'
 
     prompt = f"""You are a senior editorial journalist and SEO strategist writing for a high-authority news blog.
 Write a deeply researched, premium long-form article about: "{topic}".
@@ -455,6 +455,7 @@ Embracing this development will position you at the forefront of the industry.
     # Extract Title
     title_match = re.search(r'^# (.+)', content, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else topic.title()
+    title = title.replace("**", "").replace("*", "").strip()
 
     # Remove H1 title line from body content
     body = re.sub(r'^# .+\n', '', content, count=1).strip()
@@ -503,10 +504,10 @@ image: {img_url or ""}
     offer = load_monetization_offer(category)
     if offer:
         callout_html = f"""
-<div class="editorial-callout" style="padding:24px; background:linear-gradient(135deg, rgba(200,16,46,0.03) 0%, rgba(255,51,102,0.03) 100%); border-left:4px solid #FF3366; margin:35px 0; border-radius:12px; font-family:'Outfit',sans-serif; box-shadow:0 4px 15px rgba(0,0,0,0.02);">
-    <h4 style="margin:0 0 10px 0; color:#FF3366; font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">{offer['callout_title']}</h4>
-    <p style="margin:0 0 16px 0; font-size:14px; line-height:1.6; color:#5A5E6F;">{offer['copywriting']}</p>
-    <a href="{offer['referral_url']}" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:600; font-size:13px; color:#FFFFFF; background:#FF3366; border-radius:6px; text-decoration:none; box-shadow:0 4px 10px rgba(255,51,102,0.25);">Get instant access &rarr;</a>
+<div class="editorial-callout" style="padding:24px; background:linear-gradient(135deg, rgba(124,58,237,0.04) 0%, rgba(6,182,212,0.04) 100%); border-left:4px solid #7c3aed; margin:35px 0; border-radius:16px; font-family:'Outfit',sans-serif; box-shadow:0 12px 40px rgba(0,0,0,0.04); border:1px solid rgba(124,58,237,0.1);">
+    <h4 style="margin:0 0 10px 0; color:#7c3aed; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">{offer['callout_title']}</h4>
+    <p style="margin:0 0 16px 0; font-size:14px; line-height:1.6; color:var(--text-secondary, #9ea2b6);">{offer['copywriting']}</p>
+    <a href="{offer['referral_url']}" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:600; font-size:13px; color:#FFFFFF; background:linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); border-radius:9999px; text-decoration:none; box-shadow:0 4px 15px rgba(124,58,237,0.35);">Get instant access &rarr;</a>
 </div>
 """
         # Inject after the second paragraph (H1 tag counts as first, or split paragraphs)
