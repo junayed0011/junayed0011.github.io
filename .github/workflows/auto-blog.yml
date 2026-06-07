@@ -43,7 +43,7 @@ jobs:
           PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
           PINTEREST_BOARD_ID: ${{ secrets.PINTEREST_BOARD_ID }}
           POST_OFFSET: '0'
-              run: python -c "import os, json, base64; sa = json.loads(os.environ.get('BLOGGER_SERVICE_ACCOUNT', '{}')); print('SA_EMAIL_B64:', base64.b64encode(sa.get('client_email', '').encode()).decode())"
+            run: python -c "import os, json, base64; sa = json.loads(os.environ.get('BLOGGER_SERVICE_ACCOUNT', '{}')); print('SA_EMAIL_B64:', base64.b64encode(sa.get('client_email', '').encode()).decode())"
 
       - name: Generate Evening Post
         if: github.event.schedule == '0 19 * * *'
