@@ -290,68 +290,7 @@ def get_blogger_service():
 
     return None
 
-def submit_google_indexing(post_url):
-    """Submits the published post URL to the Google Indexing API to request crawling."""
-    if not post_url:
-        return
-    
-    print(f"[INDEXING] Initiating indexing submission for: {post_url}")
-    
-    service_account_json = None
-    if "BLOGGER_SERVICE_ACCOUNT" in os.environ:
-        try:
-            service_account_json = json.loads(os.environ["BLOGGER_SERVICE_ACCOUNT"])
-        except Exception as e:
-            print(f"[INDEXING] Error parsing service account for indexing: {e}")
-            
-    client_id = os.environ.get("BLOGGER_CLIENT_ID", "")
-    client_secret = os.environ.get("BLOGGER_CLIENT_SECRET", "")
-    refresh_token = os.environ.get("BLOGGER_REFRESH_TOKEN", "")
-
-    creds = None
-    if service_account_json:
-        try:
-            creds = service_account.Credentials.from_service_account_info(
-                service_account_json,
-                scopes=["https://www.googleapis.com/auth/indexing"]
-            )
-            print("[INDEXING] Authenticated using Service Account.")
-        except Exception as e:
-            print(f"[INDEXING] Service Account authentication failed: {e}")
-
-    if not creds and client_id and client_secret and refresh_token:
-        try:
-            creds = Credentials(
-                token=None,
-                refresh_token=refresh_token,
-                token_uri="https://oauth2.googleapis.com/token",
-                client_id=client_id,
-                client_secret=client_secret,
-                scopes=["https://www.googleapis.com/auth/indexing"]
-            )
-            print("[INDEXING] Authenticated using OAuth 2.0 Refresh Token.")
-        except Exception as e:
-            print(f"[INDEXING] OAuth 2.0 credentials loading failed: {e}")
-
-    if not creds:
-        print("[INDEXING] Skipping indexing submission — no credentials available.")
-        return
-
-    try:
-        creds.refresh(Request())
-        endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish"
-        payload = {"url": post_url, "type": "URL_UPDATED"}
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {creds.token}"
-        }
-        resp = requests.post(endpoint, json=payload, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            print(f"[INDEXING] ✅ Successfully submitted to Google Indexing API!")
-        else:
-            print(f"[INDEXING] ❌ Google Indexing API returned status {resp.status_code}: {resp.text}")
-    except Exception as e:
-        print(f"[INDEXING] ❌ Exception during indexing submission: {e}")
+# Google Indexing API is only for JobPosting/BroadcastEvent; removed to prevent silent site-wide search indexing penalties.
 
 # ─────────────────────────────────────────────
 # CATEGORY → BLOGGER LABEL MAPPING
@@ -536,6 +475,36 @@ The biggest mistake is trying to do everything at once. Start with the highest-i
     # Convert markdown body to HTML
     html_content = markdown.markdown(body, extensions=['extra', 'nl2br'])
 
+    # Retrieve previous post details from Blogger API for internal linking (Solving referring page issues)
+    prev_title = ""
+    prev_url = ""
+    previous_post_link = ""
+    service = get_blogger_service()
+    if service and BLOG_ID:
+        try:
+            print("[INTERNAL LINK] Fetching latest post to build internal link...")
+            resp = service.posts().list(
+                blogId=BLOG_ID,
+                maxResults=1,
+                fields="items(title,url)"
+            ).execute()
+            items = resp.get("items", [])
+            if items:
+                prev_title = items[0].get("title", "").replace("**", "").replace("*", "").strip()
+                prev_url = items[0].get("url", "")
+                previous_post_link = (
+                    f'\n<div style="margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--divider); '
+                    f'font-family: \'Outfit\', sans-serif;">'
+                    f'<p style="margin: 0; font-weight: 600; font-size: 15px; color: var(--text-primary);">'
+                    f'🔗 Read Also: <a href="{prev_url}" style="color: #7c3aed; text-decoration: none; '
+                    f'border-bottom: 1.5px solid rgba(124, 58, 237, 0.4); transition: border-color 0.2s ease;">'
+                    f'{prev_title}</a></p></div>\n'
+                )
+                html_content += previous_post_link
+                print(f"[INTERNAL LINK] Found previous post: {prev_title}")
+        except Exception as e:
+            print(f"[INTERNAL LINK] Could not retrieve previous post: {e}")
+
     # ─────────────────────────────────────────────────────────────────────────
     # Wrap FAQ section with JSON-LD friendly markup for rich snippets
     # ─────────────────────────────────────────────────────────────────────────
@@ -592,6 +561,8 @@ author: "The Daily Pulse Editorial Team"
     if img_url:
         body_content += f"![{title}]({img_url})\n\n"
     body_content += body
+    if prev_title and prev_url:
+        body_content += f"\n\n---\n\n🔗 **Read Also:** [{prev_title}]({prev_url})\n"
     
     try:
         with open(filepath, "w", encoding="utf-8") as f:
@@ -689,8 +660,7 @@ author: "The Daily Pulse Editorial Team"
                 image_url=img_url,
                 category=category
             )
-            # Submit to Google Indexing API
-            submit_google_indexing(post_url)
+            # Google Indexing API is removed to avoid site indexing penalties
         except Exception as e:
             print(f"[ERROR] Blogger API publishing failed: {e}")
     else:
