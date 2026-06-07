@@ -181,10 +181,27 @@ def parse_rss_items(xml_data):
         print(f"[RSS] XML parsing error: {e}")
     return items
 
+# ─────────────────────────────────────────────────────────────────────────────
+# QUESTION/GUIDE WORD BOOST — Titles containing these words are long-tail
+# SEO goldmines for new sites. They rank faster and power FAQ rich results.
+# ─────────────────────────────────────────────────────────────────────────────
+QUESTION_BOOST_WORDS = [
+    "how", "why", "what", "when", "which", "who",
+    "best", "top", "vs", "guide", "tips", "ways",
+    "steps", "secrets", "truth", "science", "proven"
+]
+
 def score_item(item, keywords):
-    """Score an item by how many category keywords it contains. Higher = better match."""
+    """Score an item by keyword relevance + long-tail question-word boost.
+    
+    Returns:
+        int: keyword match count + 2 per question/guide word in title
+    """
     combined = (item["title"] + " " + item["description"]).lower()
-    return sum(1 for kw in keywords if kw in combined)
+    base_score = sum(1 for kw in keywords if kw in combined)
+    # Boost items whose TITLE contains question/guide words (better for long-tail SEO)
+    question_boost = sum(2 for qw in QUESTION_BOOST_WORDS if qw in item["title"].lower())
+    return base_score + question_boost
 
 def get_trending_topic(category):
     """

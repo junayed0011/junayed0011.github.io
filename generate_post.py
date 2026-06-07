@@ -382,16 +382,19 @@ Niche: {category.upper()}. Background context: "{trend_desc}".
 - Use LSI/semantic keywords naturally — related phrases, synonyms — do NOT stuff keywords.
 - Include 6-8 sections using ## H2 headings and 2+ ### H3 sub-sections.
 - Include: one numbered list AND one bullet list in the article body.
-- Target length: 1,200–1,600 words for optimal dwell time and ranking.
+- Target length: 1,800–2,200 words. Longer, thorough content ranks higher for competitive keywords and maximizes dwell time.
 
 ━━━ SPECIAL SECTIONS (REQUIRED) ━━━
-After the conclusion, add these two mandatory sections:
+After the conclusion, add these three mandatory sections:
 
 **KEY TAKEAWAYS** (formatted as 4-5 bullet points prefixed with "✅"):
 A section titled "## Key Takeaways" with concise, scannable action items readers can immediately apply.
 
 **FAQ SECTION** (formatted as ### questions with short paragraph answers):
 A section titled "## Frequently Asked Questions" with exactly 3 relevant questions and answers about "{topic}". These power Google's FAQ rich snippets.
+
+**AUTHOR BIO** (required for E-E-A-T):
+End with a section titled "## About the Author" containing a 2-sentence bio for "The Daily Pulse Editorial Team" that establishes specific expertise in {category} topics. Example: "The Daily Pulse Editorial Team covers [category-relevant field] with a focus on evidence-based insights and practical advice. Our writers draw on industry research, expert interviews, and data analysis to bring you actionable content."
 
 ━━━ FORMATTING ━━━
 - Start with: # [Your SEO-optimized title]
@@ -526,6 +529,36 @@ The biggest mistake is trying to do everything at once. Start with the highest-i
         '<li>✅',
         '<li style="list-style:none; padding:6px 0; font-weight:500;">✅'
     )
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Inject FAQPage JSON-LD schema for Google rich result cards
+    # Extracts H3 questions + following P answers from the FAQ section
+    # ─────────────────────────────────────────────────────────────────────────
+    faq_pattern = re.findall(
+        r'<h3[^>]*>(.*?)</h3>\s*<p>(.*?)</p>',
+        html_content, re.DOTALL | re.IGNORECASE
+    )
+    if len(faq_pattern) >= 2:
+        faq_items = []
+        for q, a in faq_pattern[:5]:  # Max 5 FAQ items for schema
+            q_clean = re.sub(r'<[^>]+>', '', q).strip().replace('"', "'")
+            a_clean = re.sub(r'<[^>]+>', '', a).strip().replace('"', "'")[:300]
+            if q_clean and a_clean:
+                faq_items.append(
+                    '{"@type":"Question","name":"' + q_clean +
+                    '","acceptedAnswer":{"@type":"Answer","text":"' + a_clean + '"}}'
+                )
+        if faq_items:
+            faq_jsonld = (
+                '<script type="application/ld+json">\n'
+                '{\n  "@context": "https://schema.org",\n'
+                '  "@type": "FAQPage",\n'
+                '  "mainEntity": [' + ','.join(faq_items) + ']\n}\n'
+                '</script>\n'
+            )
+            # Prepend FAQ schema before the main Article JSON-LD
+            html_content = faq_jsonld + html_content
+            print(f"[SCHEMA] FAQPage JSON-LD injected with {len(faq_items)} Q&A pairs.")
 
     # Save markdown file to _posts directory for Jekyll
     posts_dir = os.path.join(os.path.dirname(__file__), "_posts")
