@@ -8,6 +8,17 @@
     <!-- Blogger Dynamic Head Content -->
     <b:include data='blog' name='all-head-content'/>
 
+    <!-- Google Analytics 4 (GA4) Dynamic Integration -->
+    <b:if cond='data:blog.analyticsAccountNumber'>
+        <script async='async' expr:src='&quot;https://www.googletagmanager.com/gtag/js?id=&quot; + data:blog.analyticsAccountNumber'/>
+        <script type='text/javascript'>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '<data:blog.analyticsAccountNumber/>');
+        </script>
+    </b:if>
+
     <!-- ══════════════════════════════════════════════════════════
          SEO MASTER BLOCK — Open Graph, Twitter Card, Structured Data
          ══════════════════════════════════════════════════════════ -->
