@@ -1,7 +1,7 @@
-import urllib.request
 import xml.etree.ElementTree as ET
 import random
 import re
+import requests
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RSS FEED SOURCES — Multiple feeds per category for better topic diversity
@@ -133,50 +133,99 @@ STATIC_FALLBACKS = {
 }
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# DUPLICATE POST GUARD HELPERS FOR NICHE RESEARCH
+# ─────────────────────────────────────────────────────────────────────────────
+_STOP_WORDS = {
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "it", "its", "as", "are", "was",
+    "be", "that", "this", "how", "why", "what", "who", "just", "amid",
+    "into", "up", "now", "new", "amid", "time", "says", "amid"
+}
+
+def _title_keywords(title):
+    words = re.findall(r'[a-z]+', title.lower())
+    return {w for w in words if w not in _STOP_WORDS and len(w) > 2}
+
+def is_duplicate_local(title, exclude_titles):
+    if not exclude_titles:
+        return False
+    norm = title.strip().lower()
+    if norm in exclude_titles:
+        return True
+    candidate_kw = _title_keywords(title)
+    if not candidate_kw:
+        return False
+    for pub_title in exclude_titles:
+        pub_kw = _title_keywords(pub_title)
+        if not pub_kw:
+            continue
+        overlap = len(candidate_kw & pub_kw) / len(candidate_kw)
+        if overlap >= 0.60:
+            return True
+    return False
+
+
 def fetch_feed_data(url):
-    """Fetch raw XML data from RSS feed using standard library with timeout."""
+    """Fetch raw XML data from RSS feed using requests with timeout."""
     try:
-        req = urllib.request.Request(
-            url, 
-            headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                              '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
-        )
-        with urllib.request.urlopen(req, timeout=12) as response:
-            return response.read()
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                          '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=12)
+        if response.status_code == 200:
+            return response.content
+        else:
+            print(f"[RSS] Error fetching feed {url}: HTTP {response.status_code}")
+            return None
     except Exception as e:
         print(f"[RSS] Error fetching feed {url}: {e}")
         return None
 
 def parse_rss_items(xml_data):
-    """Parse XML and extract clean title, description, and links."""
+    """Parse XML namespace-agnostically and extract clean title, description, and links.
+    Supports both RSS 2.0 (<item>) and Atom (<entry>) formats.
+    """
     items = []
     if not xml_data:
         return items
     try:
         root = ET.fromstring(xml_data)
-        # Handle both RSS 2.0 and Atom formats
-        for item in root.findall('.//item'):
-            title_el = item.find('title')
-            desc_el = item.find('description')
-            link_el = item.find('link')
+        
+        def local_name(tag):
+            return tag.split('}')[-1] if '}' in tag else tag
             
-            title_text = title_el.text.strip() if title_el is not None and title_el.text else ""
-            desc_text = desc_el.text.strip() if desc_el is not None and desc_el.text else ""
-            link_text = link_el.text.strip() if link_el is not None and link_el.text else ""
-            
-            # Strip CDATA/HTML from description
-            desc_text = re.sub(r'<[^<]+?>', '', desc_text)
-            desc_text = re.sub(r'\s+', ' ', desc_text).strip()
-            
-            # Skip very short or empty titles
-            if title_text and len(title_text) > 10:
-                items.append({
-                    "title": title_text,
-                    "description": desc_text[:500],  # Cap description length
-                    "link": link_text
-                })
+        for el in root.iter():
+            tag = local_name(el.tag)
+            if tag in ('item', 'entry'):
+                title_text = ""
+                desc_text = ""
+                link_text = ""
+                
+                for child in el:
+                    child_tag = local_name(child.tag)
+                    if child_tag == 'title':
+                        title_text = child.text.strip() if child.text else ""
+                    elif child_tag in ('description', 'summary', 'content'):
+                        if not desc_text or child_tag == 'summary':
+                            desc_text = child.text.strip() if child.text else ""
+                    elif child_tag == 'link':
+                        if child.text:
+                            link_text = child.text.strip()
+                        elif 'href' in child.attrib:
+                            link_text = child.attrib['href'].strip()
+                            
+                # Clean description
+                desc_text = re.sub(r'<[^>]+>', '', desc_text)
+                desc_text = re.sub(r'\s+', ' ', desc_text).strip()
+                
+                if title_text and len(title_text) > 10:
+                    items.append({
+                        "title": title_text,
+                        "description": desc_text[:500],
+                        "link": link_text
+                    })
     except Exception as e:
         print(f"[RSS] XML parsing error: {e}")
     return items
@@ -203,15 +252,20 @@ def score_item(item, keywords):
     question_boost = sum(2 for qw in QUESTION_BOOST_WORDS if qw in item["title"].lower())
     return base_score + question_boost
 
-def get_trending_topic(category):
+def get_trending_topic(category, exclude_titles=None):
     """
     Fetch trending headlines for a specific category from multiple RSS sources.
     
     Priority:
-    1. Best keyword-matched item from any live RSS feed
-    2. Random item from any live feed (if no keyword match)
-    3. Random high-quality static fallback
+    1. Best keyword-matched item from any live RSS feed (excluding duplicates)
+    2. Random item from any live feed (if no keyword match and not duplicate)
+    3. Random high-quality static fallback (not duplicate)
     """
+    if exclude_titles is None:
+        exclude_titles = set()
+    else:
+        exclude_titles = {t.strip().lower() for t in exclude_titles}
+
     print(f"[NICHE] Researching real-time trending topics for: {category.upper()}...")
     urls = FEEDS.get(category, [])
     category_keywords = KEYWORDS.get(category, [])
@@ -219,7 +273,7 @@ def get_trending_topic(category):
     all_matched = []  # (score, item) tuples from all feeds
     all_items = []    # fallback pool
 
-    # Try all feeds in parallel-ish (sequential with early exit)
+    # Try all feeds
     for url in urls:
         raw_xml = fetch_feed_data(url)
         if not raw_xml:
@@ -228,8 +282,11 @@ def get_trending_topic(category):
         if not parsed_items:
             continue
         
-        all_items.extend(parsed_items)
         for item in parsed_items:
+            # Skip duplicates immediately
+            if is_duplicate_local(item["title"], exclude_titles):
+                continue
+            all_items.append(item)
             score = score_item(item, category_keywords)
             if score > 0:
                 all_matched.append((score, item))
@@ -247,10 +304,17 @@ def get_trending_topic(category):
         print(f"[FEED ITEM] Random feed item (no keyword match): {selected['title']}")
         return selected
     
-    # All network sources offline — use a random high-quality static fallback
+    # All network sources offline or all feed items are duplicates — use static fallbacks
     fallbacks = STATIC_FALLBACKS.get(category, list(STATIC_FALLBACKS.values())[0])
+    non_dup_fallbacks = [f for f in fallbacks if not is_duplicate_local(f["title"], exclude_titles)]
+    if non_dup_fallbacks:
+        selected = random.choice(non_dup_fallbacks)
+        print(f"[STATIC FALLBACK] All feeds offline — using: {selected['title']}")
+        return selected
+        
+    # Absolute fallback (even if duplicate, to return something)
     selected = random.choice(fallbacks)
-    print(f"[STATIC FALLBACK] All feeds offline — using: {selected['title']}")
+    print(f"[STATIC FALLBACK] All non-duplicate fallbacks exhausted — using: {selected['title']}")
     return selected
 
 

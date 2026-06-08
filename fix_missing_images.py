@@ -111,8 +111,8 @@ def fix_all_posts():
         if current_src:
             print(f"             | Bad URL: {current_src[:80]}")
 
-        # Fetch a real image for this post's topic
-        img_url, alt, credit_name, credit_link = get_image(title)
+        # Fetch a real image for this post's topic, skipping Pollinations since Blogger cannot thumbnail them
+        img_url, alt, credit_name, credit_link = get_image(title, skip_pollinations=True)
         if not img_url:
             print(f"  !  SKIP    | Could not fetch any image for: {title[:70]}\n")
             continue

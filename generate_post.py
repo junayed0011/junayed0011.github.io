@@ -192,18 +192,19 @@ def get_picsum_image(topic):
         print(f"[IMAGE] Picsum fallback failed: {e}")
     return None, None, None, None
 
-def get_image(topic, category="lifestyle"):
-    """Try Pollinations AI first, then Unsplash, then Picsum."""
-    img_url, alt, credit_name, credit_link = get_pollinations_image(topic, category)
-    if img_url and "picsum.photos" not in img_url:
-        return img_url, alt, credit_name, credit_link
+def get_image(topic, category="lifestyle", skip_pollinations=False):
+    """Try Pollinations AI first (unless skipped), then Unsplash, then Picsum."""
+    if not skip_pollinations:
+        img_url, alt, credit_name, credit_link = get_pollinations_image(topic, category)
+        if img_url and "picsum.photos" not in img_url:
+            return img_url, alt, credit_name, credit_link
         
     if UNSPLASH_ACCESS_KEY:
         u_url, u_alt, u_name, u_link = get_unsplash_image(topic)
         if u_url:
             return u_url, u_alt, u_name, u_link
             
-    return img_url, alt, credit_name, credit_link
+    return get_picsum_image(topic)
 
 def call_groq(prompt, model="llama-3.3-70b-versatile", max_tokens=4096, temp=0.75):
     """Executes call to Groq with rate limit retries. Uses 70B model for premium content quality."""
@@ -310,8 +311,9 @@ def generate_post(topic_offset=0):
     category_index = (today.timetuple().tm_yday * 2 + topic_offset) % len(categories)
     category = categories[category_index]
     
-    # Query live RSS feeds via research module
-    trend = trends_researcher.get_trending_topic(category)
+    # Query live RSS feeds via research module, excluding already published posts
+    published_titles = load_published_titles()
+    trend = trends_researcher.get_trending_topic(category, exclude_titles=published_titles)
     topic = trend["title"]
     trend_desc = trend["description"]
     
@@ -321,7 +323,7 @@ def generate_post(topic_offset=0):
     if is_duplicate(topic):
         print(f"[DUPLICATE] Skipping '{topic}' — already published. Fetching alternative topic...")
         for _ in range(5):
-            trend = trends_researcher.get_trending_topic(category)
+            trend = trends_researcher.get_trending_topic(category, exclude_titles=published_titles)
             topic = trend["title"]
             trend_desc = trend["description"]
             if not is_duplicate(topic):
@@ -468,12 +470,12 @@ The biggest mistake is trying to do everything at once. Start with the highest-i
         content = content.replace(meta_match.group(0), "")
 
     # Extract Title
-    title_match = re.search(r'^# (.+)', content, re.MULTILINE)
+    title_match = re.search(r'^#\s+(.+)', content.strip(), re.MULTILINE)
     title = title_match.group(1).strip() if title_match else topic.title()
     title = title.replace("**", "").replace("*", "").strip()
 
     # Remove H1 title line from body content
-    body = re.sub(r'^# .+\n', '', content, count=1).strip()
+    body = re.sub(r'^#\s+.+\n?', '', content.strip(), count=1).strip()
 
     # Convert markdown body to HTML
     html_content = markdown.markdown(body, extensions=['extra', 'nl2br'])
@@ -616,11 +618,18 @@ author: "The Daily Pulse Editorial Team"
   <a href="{offer['referral_url']}" target="_blank" rel="noopener sponsored" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; font-weight:600; font-size:13px; color:#FFFFFF; background:linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); border-radius:9999px; text-decoration:none; box-shadow:0 4px 15px rgba(124,58,237,0.35);">Get instant access &rarr;</a>
 </div>
 """
-        # Inject after the second paragraph
-        paragraphs = html_content.split("</p>")
-        if len(paragraphs) > 2:
-            paragraphs[1] += "</p>\n" + callout_html
-            html_content = "</p>".join(paragraphs)
+        # Inject after the second paragraph (i.e. after the second </p>)
+        pos = 0
+        count = 0
+        for _ in range(2):
+            pos = html_content.find("</p>", pos)
+            if pos == -1:
+                break
+            pos += 4  # Move past </p>
+            count += 1
+            
+        if count == 2:
+            html_content = html_content[:pos] + "\n" + callout_html + html_content[pos:]
         else:
             html_content += "\n" + callout_html
 
